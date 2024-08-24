@@ -5,9 +5,23 @@ using UnityEngine;
 
 public class BasePlayer : NetworkBehaviour
 {
+    private NetworkVariable<int> randomNumber = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public override void OnNetworkSpawn()
+    {
+        randomNumber.OnValueChanged += (int prevVal, int newVal) => {
+            Debug.Log(OwnerClientId + ": " + randomNumber.Value);
+        };
+    }
+
     void Update()
     {
         if (!IsOwner) return;
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            randomNumber.Value = Random.Range(0, 100);
+        }
 
         Vector3 moveDir = new Vector3(0, 0, 0);
 
