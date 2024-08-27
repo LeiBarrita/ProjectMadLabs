@@ -13,7 +13,7 @@ using UnityEngine.UI;
 
 public class NetworkManagerUI : MonoBehaviour
 {
-    [SerializeField] private Button hostBtn; 
+    [SerializeField] private Button hostBtn;
     [SerializeField] private TextMeshProUGUI hostCode;
     [SerializeField] private Button clientBtn;
     [SerializeField] private string clientCode;
@@ -30,12 +30,14 @@ public class NetworkManagerUI : MonoBehaviour
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
-        hostBtn.onClick.AddListener(()=> {
+        hostBtn.onClick.AddListener(() =>
+        {
             // NetworkManager.Singleton.StartHost();
             CreateRelay();
         });
 
-        clientBtn.onClick.AddListener(() => {
+        clientBtn.onClick.AddListener(() =>
+        {
             // NetworkManager.Singleton.StartClient();
             JoinRelay(clientCode);
         });
