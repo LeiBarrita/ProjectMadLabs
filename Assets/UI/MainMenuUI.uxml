@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="OnlineGameUI" src="project://database/Assets/UI/OnlineGameUI.uxml?fileID=9197481963319205126&amp;guid=73970c029c34a524d99099b7a87e2be2&amp;type=3#OnlineGameUI" />
+    <ui:Template name="JoinOnlineUI" src="project://database/Assets/UI/JoinOnlineUI.uxml?fileID=9197481963319205126&amp;guid=52f6e5d2b8f5b3140a72e68206e2b88e&amp;type=3#JoinOnlineUI" />
+    <ui:Instance template="OnlineGameUI" name="OnlineGameUI" style="flex-grow: 1;" />
+    <ui:Instance template="JoinOnlineUI" name="JoinOnlineUI" style="flex-grow: 1; display: none;" />
+</ui:UXML>
