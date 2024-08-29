@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class JoinMenuUI : MonoBehaviour
+public class JoinMenuUI
 {
     public Action GoBack { set => _backBtn.clicked += value; }
 

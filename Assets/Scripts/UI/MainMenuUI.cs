@@ -5,6 +5,8 @@ using UnityEngine.UIElements;
 
 public class MainMenuUI : MonoBehaviour
 {
+    [SerializeField] private int maxPlayers = 4;
+
     private VisualElement _onlineUI;
     private VisualElement _joinUI;
 
@@ -17,6 +19,7 @@ public class MainMenuUI : MonoBehaviour
         SetupStartMenu();
         SetupJoinMenu();
     }
+
 
     private void SetupStartMenu()
     {
