@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 public class OnlineMenuUI
 {
     public Action OpenJoinOnline { set => _joinBtn.clicked += value; }
-    private int maxPlayers = 4;
+    private readonly int maxPlayers = 4;
     private Button _hostBtn;
     private Button _joinBtn;
 
@@ -36,7 +36,11 @@ public class OnlineMenuUI
 
     private async void OnLoadCompleted(AsyncOperation operation)
     {
-        await OnlineServices.StartAnonymousSession();
-        await OnlineServices.CreateRelay(maxPlayers);
+        string joinCode = await OnlineServices.CreateRelay(maxPlayers);
+        GameStateManager.joinCode = joinCode;
+
+        VisualElement root = UnityEngine.Object.FindAnyObjectByType<UIDocument>().rootVisualElement;
+        Label joinCodeLabel = root.Q<Label>("JoinCode");
+        joinCodeLabel.text = joinCode;
     }
 }

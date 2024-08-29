@@ -5,12 +5,12 @@ using UnityEngine.UIElements;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [SerializeField] private int maxPlayers = 4;
+    // [SerializeField] private int maxPlayers = 4;
 
     private VisualElement _onlineUI;
     private VisualElement _joinUI;
 
-    void Start()
+    async void Start()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         _onlineUI = root.Q("OnlineGameUI");
@@ -18,6 +18,7 @@ public class MainMenuUI : MonoBehaviour
 
         SetupStartMenu();
         SetupJoinMenu();
+        await OnlineServices.StartAnonymousSession();
     }
 
 

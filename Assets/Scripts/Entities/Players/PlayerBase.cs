@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BasePlayer : NetworkBehaviour
 {
@@ -9,9 +11,16 @@ public class BasePlayer : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        randomNumber.OnValueChanged += (int prevVal, int newVal) => {
+        randomNumber.OnValueChanged += (int prevVal, int newVal) =>
+        {
             Debug.Log(OwnerClientId + ": " + randomNumber.Value);
         };
+    }
+
+    void Start()
+    {
+        UIDocument playerUI = GameObject.Find("PlayerUI").GetComponent<UIDocument>();
+        playerUI.enabled = true;
     }
 
     void Update()

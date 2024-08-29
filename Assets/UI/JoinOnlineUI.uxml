@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement style="flex-grow: 1; align-self: center; justify-content: center; display: flex;">
-        <ui:TextField picking-mode="Ignore" label="Join Code&#x9;" name="joinCodeField" max-length="100" password="false" style="flex-direction: column; width: 200px; align-self: auto; -unity-text-align: upper-center;" />
+        <ui:TextField picking-mode="Ignore" label="Join Code&#x9;" name="JoinCodeField" max-length="100" password="false" style="flex-direction: column; width: 200px; align-self: auto; -unity-text-align: upper-center;" />
         <ui:Button text="Join" parse-escape-sequences="true" display-tooltip-when-elided="true" name="JoinBtn" style="width: 200px;" />
         <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackBtn" />
     </ui:VisualElement>

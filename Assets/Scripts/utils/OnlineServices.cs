@@ -24,7 +24,7 @@ public class OnlineServices
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
-    public static async Task CreateRelay(int maxPlayers)
+    public static async Task<string> CreateRelay(int maxPlayers)
     {
         try
         {
@@ -35,11 +35,13 @@ public class OnlineServices
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartHost();
 
-            Debug.Log("Join Code: " + joinCode);
+            // Debug.Log("Join Code: " + joinCode);
+            return joinCode;
         }
         catch (RelayServiceException e)
         {
             Debug.LogError(e);
+            throw e;
         }
     }
 
@@ -47,7 +49,7 @@ public class OnlineServices
     {
         try
         {
-            Debug.Log("Joining Relay with code: " + joinCode);
+            // Debug.Log("Joining Relay with code: " + joinCode);
             JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
             RelayServerData relayServerData = new(joinAllocation, "dtls");
@@ -57,6 +59,7 @@ public class OnlineServices
         catch (RelayServiceException e)
         {
             Debug.LogError(e);
+            throw e;
         }
     }
 }
