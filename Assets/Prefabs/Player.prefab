@@ -175,6 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70f7dbdda415d3e4e887a78a676bbd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onPlayerSpawns: {fileID: 11400000, guid: b5a181611cff5044c8461eaf1a7b74c9, type: 2}
 --- !u!114 &-4952160655284210050
 MonoBehaviour:
   m_ObjectHideFlags: 0

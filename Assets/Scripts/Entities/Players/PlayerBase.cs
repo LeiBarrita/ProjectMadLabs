@@ -1,36 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class BasePlayer : NetworkBehaviour
 {
-    private NetworkVariable<int> randomNumber = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [Header("Events")]
+    public GameEvent onPlayerSpawns;
 
-    public override void OnNetworkSpawn()
-    {
-        randomNumber.OnValueChanged += (int prevVal, int newVal) =>
-        {
-            Debug.Log(OwnerClientId + ": " + randomNumber.Value);
-        };
-    }
+    // private NetworkVariable<int> randomNumber = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    // public override void OnNetworkSpawn()
+    // {
+    //     randomNumber.OnValueChanged += (int prevVal, int newVal) =>
+    //     {
+    //         Debug.Log(OwnerClientId + ": " + randomNumber.Value);
+    //     };
+    // }
 
     void Start()
     {
-        UIDocument playerUI = GameObject.Find("PlayerUI").GetComponent<UIDocument>();
-        playerUI.enabled = true;
+        // Camera.main.transform.parent = transform;
+        // Camera.main.transform.position = Vector3.zero;
+        // UIDocument playerUI = GameObject.Find("PlayerUI").GetComponent<UIDocument>();
+        // playerUI.enabled = true;
+
+        onPlayerSpawns.Raise();
     }
 
     void Update()
     {
         if (!IsOwner) return;
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            randomNumber.Value = Random.Range(0, 100);
-        }
+        // if (Input.GetKeyDown(KeyCode.T))
+        // {
+        //     randomNumber.Value = Random.Range(0, 100);
+        // }
 
         Vector3 moveDir = new Vector3(0, 0, 0);
 

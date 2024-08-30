@@ -38,9 +38,5 @@ public class OnlineMenuUI
     {
         string joinCode = await OnlineServices.CreateRelay(maxPlayers);
         GameStateManager.joinCode = joinCode;
-
-        VisualElement root = UnityEngine.Object.FindAnyObjectByType<UIDocument>().rootVisualElement;
-        Label joinCodeLabel = root.Q<Label>("JoinCode");
-        joinCodeLabel.text = joinCode;
     }
 }

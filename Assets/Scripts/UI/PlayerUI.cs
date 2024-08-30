@@ -11,6 +11,10 @@ public class PlayerUI : MonoBehaviour
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         _codeField = root.Q<Label>("JoinCode");
+    }
+
+    public void LoadJoinCode()
+    {
         if (_codeField != null) _codeField.text = GameStateManager.joinCode;
     }
 }
