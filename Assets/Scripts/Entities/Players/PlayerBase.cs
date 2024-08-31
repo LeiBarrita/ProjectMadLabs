@@ -26,7 +26,7 @@ public class BasePlayer : NetworkBehaviour
         // UIDocument playerUI = GameObject.Find("PlayerUI").GetComponent<UIDocument>();
         // playerUI.enabled = true;
 
-        onPlayerSpawns.Raise();
+        onPlayerSpawns.Raise(this, null);
     }
 
     void Update()
