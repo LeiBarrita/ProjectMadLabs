@@ -239,6 +239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da64eba64565b574298f874af2fa3940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseLifePoints: 100
+  State: 1
   onPlayerSpawns: {fileID: 11400000, guid: b5a181611cff5044c8461eaf1a7b74c9, type: 2}
 --- !u!114 &-6362843381348302561
 MonoBehaviour:

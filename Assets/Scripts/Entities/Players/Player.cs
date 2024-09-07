@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Player : NetworkBehaviour
+public class Player : Creature
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
@@ -24,6 +24,16 @@ public class Player : NetworkBehaviour
     void Update()
     {
 
+    }
+
+    public override void Damage(int damage)
+    {
+        if (lifePoints > 10 && damage > 10)
+            lifePoints = 1;
+        else
+        {
+            base.Damage(damage);
+        }
     }
 
     public override void OnDestroy()
