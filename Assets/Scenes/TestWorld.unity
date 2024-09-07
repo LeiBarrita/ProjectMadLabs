@@ -734,9 +734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b70fc4351d181b47a4e04345873d712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensX: 400
-  sensY: 400
-  orientation: {fileID: 0}
+  sens: 400
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
