@@ -18,7 +18,7 @@ public class Player : Creature
 
     void Awake()
     {
-        gameObject.AddComponent<PlayerController>();
+        // gameObject.AddComponent<PlayerController>();
     }
 
     void Update()
