@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PickController
 {
+    [SerializeField]
+    private LayerMask layer;
     private readonly Camera _camera;
     private readonly Transform _hand;
 
@@ -16,14 +18,17 @@ public class PickController
     public void Controls()
     {
         Ray cameraRay = _camera.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(cameraRay, 5f);
-        Debug.DrawRay(cameraRay.origin, cameraRay.direction * 10, Color.red);
 
-        // Debug.DrawRay(_hand.position, _hand.forward * 30, Color.red);
+        Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Physics.Raycast(cameraRay, out RaycastHit hitObject, 3f))
         {
-            Debug.Log("Ray!");
+            IPickable pickObject = hitObject.transform.gameObject.GetComponent<IPickable>();
+
+            if (pickObject != null && Input.GetKeyDown(KeyCode.E))
+            {
+                pickObject.Activate();
+            }
         }
     }
 }

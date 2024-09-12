@@ -7,6 +7,6 @@ public class GravityShifter : NetworkBehaviour, IPickable
 {
     public void Activate()
     {
-        Debug.Log("Respawner Activated!");
+        Debug.Log("Gravity Shifter Picked!");
     }
 }

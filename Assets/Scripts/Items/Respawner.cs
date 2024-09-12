@@ -7,6 +7,6 @@ public class Respawner : NetworkBehaviour, IPickable
 {
     public void Activate()
     {
-        Debug.Log("Respawner Activated!");
+        Debug.Log("Respawner Picked!");
     }
 }
