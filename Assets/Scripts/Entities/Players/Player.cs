@@ -16,11 +16,6 @@ public class Player : Creature
         onPlayerSpawns.Raise(this, null);
     }
 
-    void Awake()
-    {
-        // gameObject.AddComponent<PlayerController>();
-    }
-
     void Update()
     {
 

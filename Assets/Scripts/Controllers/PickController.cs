@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PickController : MonoBehaviour
+public class PickController : NetworkBehaviour
 {
     [SerializeField] private KeyCode PickKey;
+    // private IPickable pickObject;
+    private bool isHolding;
 
     private void Update()
     {
@@ -15,9 +18,19 @@ public class PickController : MonoBehaviour
         {
             IPickable pickObject = hitObject.transform.gameObject.GetComponent<IPickable>();
 
-            if (pickObject != null && Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                pickObject.Activate();
+                if (isHolding)
+                {
+                    isHolding = false;
+                }
+
+                Player player = transform.parent.GetComponent<Player>();
+                if (player != null)
+                {
+                    isHolding = true;
+                    pickObject.Pick(player, transform);
+                }
             }
         }
     }
