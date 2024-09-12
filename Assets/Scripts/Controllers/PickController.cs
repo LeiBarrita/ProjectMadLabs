@@ -2,23 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickController
+public class PickController : MonoBehaviour
 {
-    [SerializeField]
-    private LayerMask layer;
-    private readonly Camera _camera;
-    private readonly Transform _hand;
+    [SerializeField] private KeyCode PickKey;
 
-    public PickController(Transform hand, Camera camera)
+    private void Update()
     {
-        _camera = camera;
-        _hand = hand;
-    }
-
-    public void Controls()
-    {
-        Ray cameraRay = _camera.ScreenPointToRay(Input.mousePosition);
-
+        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
 
         if (Physics.Raycast(cameraRay, out RaycastHit hitObject, 3f))

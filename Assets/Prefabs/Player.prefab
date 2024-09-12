@@ -145,6 +145,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4901371040632968869}
+  - component: {fileID: 2409212141815554228}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged
@@ -167,6 +168,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8750837744364983451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2409212141815554228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3535567457066625370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7f079e906b98ba4c97b3c165fe4ea56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PickKey: 101
 --- !u!1 &5377694722212985521
 GameObject:
   m_ObjectHideFlags: 0

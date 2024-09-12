@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
     private float _xRotation;
     private float _yRotation;
 
-    private PickController pickControl;
+    // private PickController pickControl;
 
     void Start()
     {
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
         if (headTrans != null) transform.position = headTrans.position;
         if (playerTrans != null) playerTrans.rotation = Quaternion.Euler(0, _yRotation, 0);
 
-        pickControl?.Controls();
+        // pickControl?.Controls();
     }
 
     public void onPlayerSpawns(Component sender, object data)
@@ -47,7 +47,7 @@ public class CameraController : MonoBehaviour
 
                 player.OnPlayerDestroy += OnParentDestroy;
 
-                pickControl = new PickController(player.transform.Find("RightHand"), Camera.main);
+                // pickControl = new PickController(player.transform.Find("RightHand"), Camera.main);
 
                 Debug.LogWarning("Is Owner!");
             }
@@ -58,7 +58,7 @@ public class CameraController : MonoBehaviour
     {
         // transform.parent = null;
         headTrans = transform;
-        pickControl = null;
+        // pickControl = null;
         Debug.LogWarning("Main Camera parent destroyed");
     }
 }
