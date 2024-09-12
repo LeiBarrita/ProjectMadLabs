@@ -5,26 +5,24 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private float sens;
-    // [SerializeField] private float sensY;
-
-    // public Transform orientation;
 
     private Transform headTrans;
     private Transform playerTrans;
     private float _xRotation;
     private float _yRotation;
 
+    private PickController pickControl;
+
     void Start()
     {
-        // orientation = Transform.pare
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sens;
-        float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sens;
+        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sens;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sens;
 
         _yRotation += mouseX;
         _xRotation -= mouseY;
@@ -32,10 +30,10 @@ public class CameraController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(_xRotation, _yRotation, 0);
 
-        // if (orientation != null) orientation.rotation = Quaternion.Euler(0, _yRotation, 0);
-
         if (headTrans != null) transform.position = headTrans.position;
         if (playerTrans != null) playerTrans.rotation = Quaternion.Euler(0, _yRotation, 0);
+
+        pickControl?.Controls();
     }
 
     public void onPlayerSpawns(Component sender, object data)
@@ -44,15 +42,12 @@ public class CameraController : MonoBehaviour
         {
             if (player.IsOwner)
             {
-                // orientation = player.transform;
-
-                // transform.parent = player.transform.Find("Head");
-                // transform.localPosition = Vector3.zero;
-
                 playerTrans = player.transform;
                 headTrans = player.transform.Find("Head");
 
                 player.OnPlayerDestroy += OnParentDestroy;
+
+                pickControl = new PickController(player.transform.Find("RightHand"), Camera.main);
 
                 Debug.LogWarning("Is Owner!");
             }
@@ -63,6 +58,7 @@ public class CameraController : MonoBehaviour
     {
         // transform.parent = null;
         headTrans = transform;
+        pickControl = null;
         Debug.LogWarning("Main Camera parent destroyed");
     }
 }

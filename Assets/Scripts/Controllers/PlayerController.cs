@@ -88,8 +88,8 @@ public class PlayerController : NetworkBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        Debug.Log("ready: " + readyToJump);
-        Debug.Log("grounded: " + grounded);
+        // Debug.Log("ready: " + readyToJump);
+        // Debug.Log("grounded: " + grounded);
 
         if (Input.GetKey(jumpKey) && grounded)
         {
