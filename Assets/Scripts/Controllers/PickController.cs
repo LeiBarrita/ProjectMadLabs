@@ -11,18 +11,19 @@ public class PickController : NetworkBehaviour
     private void Update()
     {
         Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        // Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
+        Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
 
-        if (Physics.Raycast(cameraRay, out RaycastHit hitObject, 3f))
+        if (Input.GetKeyDown(PickKey))
         {
-            Item pickObject = hitObject.transform.gameObject.GetComponent<Item>();
-
-            if (pickObject != null && Input.GetKeyDown(PickKey))
+            if (holdingItem != null)
+                DropItem();
+            else if (Physics.Raycast(cameraRay, out RaycastHit hitObject, 3f))
             {
-                if (holdingItem != null)
-                    DropItem();
-                else
+                if (hitObject.transform.gameObject.TryGetComponent<Item>(out var pickObject))
+                {
+                    if (holdingItem != null) DropItem();
                     PickItem(pickObject);
+                }
             }
         }
     }
@@ -31,12 +32,14 @@ public class PickController : NetworkBehaviour
     {
         if (transform.parent.TryGetComponent<Player>(out var player))
         {
+            holdingItem = item;
             item.OnPick(player, transform);
         }
     }
 
     private void DropItem()
     {
+        Debug.LogWarning("Dropping item");
         holdingItem.OnDrop();
         holdingItem = null;
     }

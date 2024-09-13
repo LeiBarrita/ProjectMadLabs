@@ -10,6 +10,7 @@ public abstract class Item : NetworkBehaviour
 
     public virtual void OnDrop()
     {
+        Debug.LogWarning("Item drop");
         Holder = null;
         transform.parent = null;
     }
