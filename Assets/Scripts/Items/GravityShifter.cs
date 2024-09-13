@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GravityShifter : NetworkBehaviour
+public class GravityShifter : Item
 {
-    public void Activate()
+    public override void OnPick(Player player, Transform pos)
     {
-        Debug.Log("Gravity Shifter Picked!");
+        base.OnPick(player, pos);
+
+        // Gravedad se invierta
+        Holder.GetComponent<Rigidbody>().useGravity = false;
     }
 }

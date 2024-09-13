@@ -6,32 +6,38 @@ using UnityEngine;
 public class PickController : NetworkBehaviour
 {
     [SerializeField] private KeyCode PickKey;
-    // private IPickable pickObject;
-    private bool isHolding;
+    private Item holdingItem;
 
     private void Update()
     {
         Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
+        // Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
 
         if (Physics.Raycast(cameraRay, out RaycastHit hitObject, 3f))
         {
-            IPickable pickObject = hitObject.transform.gameObject.GetComponent<IPickable>();
+            Item pickObject = hitObject.transform.gameObject.GetComponent<Item>();
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (pickObject != null && Input.GetKeyDown(PickKey))
             {
-                if (isHolding)
-                {
-                    isHolding = false;
-                }
-
-                Player player = transform.parent.GetComponent<Player>();
-                if (player != null)
-                {
-                    isHolding = true;
-                    pickObject.Pick(player, transform);
-                }
+                if (holdingItem != null)
+                    DropItem();
+                else
+                    PickItem(pickObject);
             }
         }
+    }
+
+    private void PickItem(Item item)
+    {
+        if (transform.parent.TryGetComponent<Player>(out var player))
+        {
+            item.OnPick(player, transform);
+        }
+    }
+
+    private void DropItem()
+    {
+        holdingItem.OnDrop();
+        holdingItem = null;
     }
 }
