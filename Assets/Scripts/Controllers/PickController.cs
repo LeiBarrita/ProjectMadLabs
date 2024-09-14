@@ -10,6 +10,8 @@ public class PickController : NetworkBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
 

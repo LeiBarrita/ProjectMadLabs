@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Deprecated
 public interface IPickable
 {
     bool CanShrink { get; }
