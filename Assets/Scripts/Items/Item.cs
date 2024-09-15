@@ -17,7 +17,6 @@ public abstract class Item : NetworkBehaviour
 
     protected virtual void FollowHoldPosition(Transform followPos)
     {
-        // Debug.Log("Holding by " + Holder.OwnerClientId);
         transform.SetPositionAndRotation(
             followPos.position,
             followPos.rotation
@@ -31,10 +30,10 @@ public abstract class Item : NetworkBehaviour
         HoldPosition = null;
     }
 
-    public virtual void OnPick(Player player, Transform holdPos)
+    // public virtual void OnPick(Player player, Transform holdPos)
+    public virtual void OnPick(NetworkObjectReference holdPositionRef)
     {
-        Holder = player;
-        HoldPosition = holdPos;
+        SetHolderServerRpc(holdPositionRef);
         Debug.LogWarning("Picked by " + Holder.OwnerClientId);
     }
 
@@ -51,19 +50,24 @@ public abstract class Item : NetworkBehaviour
     // RPCs
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetHolderServerRpc()
+    private void SetHolderServerRpc(NetworkObjectReference holdPositionRef)
     {
-
+        SetHolderClientRpc(holdPositionRef);
     }
 
     [ClientRpc]
-    private void SetHolderClientRpc(NetworkObjectReference playerRefence, NetworkObjectReference holdPosReference)
+    private void SetHolderClientRpc(NetworkObjectReference holdPositionRef)
     {
-        if (playerRefence.TryGet(out NetworkObject networkObject))
+        if (holdPositionRef.TryGet(out NetworkObject networkObject))
         {
+            // Player player = networkObject.GetComponentInParent<Player>();
+            // Transform holdPosition = networkObject.transform;
             Player player = networkObject.GetComponent<Player>();
+            IHolder holder = networkObject.GetComponent<IHolder>();
+            Transform holdPosition = holder.GetHoldPosition();
+
+            HoldPosition = holdPosition;
             Holder = player;
-            // HoldPosition = holdPos;
         }
     }
 }

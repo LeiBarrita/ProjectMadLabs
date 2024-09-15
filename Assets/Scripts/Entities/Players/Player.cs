@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Player : Creature
+public class Player : Creature, IHolder
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
+
+
 
     public event Action OnPlayerDestroy;
 
@@ -36,5 +38,11 @@ public class Player : Creature
         base.OnDestroy();
         OnPlayerDestroy?.Invoke();
         Debug.LogWarning("Player Destroyed");
+    }
+
+    public Transform GetHoldPosition()
+    {
+        Transform holdPositon = transform.Find("Hand").transform;
+        return holdPositon;
     }
 }

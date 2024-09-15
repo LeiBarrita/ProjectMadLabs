@@ -12,13 +12,6 @@ public class NetworkRpcManager : NetworkBehaviour
 
     private void Awake()
     {
-        // if (IsClient)
-        // {
-        //     Debug.LogWarning("Evil Clone Destroyed!");
-        //     Destroy(gameObject);
-        //     return;
-        // }
-
         Instance = this;
         // DontDestroyOnLoad(this);
     }
