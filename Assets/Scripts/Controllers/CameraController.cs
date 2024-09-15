@@ -49,7 +49,7 @@ public class CameraController : MonoBehaviour
 
                 // pickControl = new PickController(player.transform.Find("RightHand"), Camera.main);
 
-                Debug.LogWarning("Is Owner!");
+                // Debug.LogWarning("Is Owner!");
             }
         }
     }

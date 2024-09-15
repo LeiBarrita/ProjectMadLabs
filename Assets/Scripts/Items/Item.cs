@@ -9,24 +9,25 @@ public abstract class Item : NetworkBehaviour
     protected Player Holder;
     protected Transform HoldPosition;
 
-    private void Update()
+    private void LateUpdate()
     {
-        if (HoldPosition != null)
-        {
-            Debug.Log("Holding by " + Holder.OwnerClientId);
-            // Vector3 follow = HoldPosition.position;
-            transform.SetPositionAndRotation(
-                HoldPosition.position,
-                Quaternion.Euler(0, -Holder.transform.rotation.y, 0)
-            );
-        }
+        if (HoldPosition == null) return;
+        FollowHoldPosition(HoldPosition);
+    }
+
+    protected virtual void FollowHoldPosition(Transform followPos)
+    {
+        // Debug.Log("Holding by " + Holder.OwnerClientId);
+        transform.SetPositionAndRotation(
+            followPos.position,
+            followPos.rotation
+        );
     }
 
     public virtual void OnDrop()
     {
         Debug.LogWarning("Dropped by " + Holder.OwnerClientId);
         Holder = null;
-        // transform.parent = null;
         HoldPosition = null;
     }
 
@@ -35,9 +36,6 @@ public abstract class Item : NetworkBehaviour
         Holder = player;
         HoldPosition = holdPos;
         Debug.LogWarning("Picked by " + Holder.OwnerClientId);
-        // transform.parent = player.GetComponent<Transform>();
-        // transform.localPosition = pos.localPosition;
-        // transform.position = pos.position;
     }
 
     public virtual void OnThrow(Vector3 direction, float force)
@@ -49,4 +47,23 @@ public abstract class Item : NetworkBehaviour
     public virtual void OnActivate() { }
     public virtual void OnCharge() { }
     public virtual void OnRelease() { }
+
+    // RPCs
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetHolderServerRpc()
+    {
+
+    }
+
+    [ClientRpc]
+    private void SetHolderClientRpc(NetworkObjectReference playerRefence, NetworkObjectReference holdPosReference)
+    {
+        if (playerRefence.TryGet(out NetworkObject networkObject))
+        {
+            Player player = networkObject.GetComponent<Player>();
+            Holder = player;
+            // HoldPosition = holdPos;
+        }
+    }
 }
