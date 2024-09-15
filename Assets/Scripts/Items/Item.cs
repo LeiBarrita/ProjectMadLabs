@@ -23,6 +23,11 @@ public abstract class Item : NetworkBehaviour
         );
     }
 
+    public virtual void Drop()
+    {
+        DropItemServerRpc();
+    }
+
     public virtual void OnDrop()
     {
         Debug.LogWarning("Dropped by " + Holder.OwnerClientId);
@@ -30,11 +35,17 @@ public abstract class Item : NetworkBehaviour
         HoldPosition = null;
     }
 
-    // public virtual void OnPick(Player player, Transform holdPos)
-    public virtual void OnPick(NetworkObjectReference holdPositionRef)
+    public virtual void Pick(NetworkObjectReference playerRef)
     {
-        SetHolderServerRpc(holdPositionRef);
-        Debug.LogWarning("Picked by " + Holder.OwnerClientId);
+        PickItemServerRpc(playerRef);
+    }
+
+    public virtual void OnPick(Player player, IHolder holder)
+    {
+        // DropItemServerRpc();
+        Transform holdPosition = holder.GetHoldPosition();
+        HoldPosition = holdPosition;
+        Holder = player;
     }
 
     public virtual void OnThrow(Vector3 direction, float force)
@@ -47,27 +58,37 @@ public abstract class Item : NetworkBehaviour
     public virtual void OnCharge() { }
     public virtual void OnRelease() { }
 
-    // RPCs
+    #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetHolderServerRpc(NetworkObjectReference holdPositionRef)
+    private void PickItemServerRpc(NetworkObjectReference holdPositionRef)
     {
-        SetHolderClientRpc(holdPositionRef);
+        PickItemClientRpc(holdPositionRef);
     }
 
     [ClientRpc]
-    private void SetHolderClientRpc(NetworkObjectReference holdPositionRef)
+    private void PickItemClientRpc(NetworkObjectReference holdPositionRef)
     {
         if (holdPositionRef.TryGet(out NetworkObject networkObject))
         {
-            // Player player = networkObject.GetComponentInParent<Player>();
-            // Transform holdPosition = networkObject.transform;
             Player player = networkObject.GetComponent<Player>();
             IHolder holder = networkObject.GetComponent<IHolder>();
-            Transform holdPosition = holder.GetHoldPosition();
 
-            HoldPosition = holdPosition;
-            Holder = player;
+            OnPick(player, holder);
         }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DropItemServerRpc()
+    {
+        DropItemClientRpc();
+    }
+
+    [ClientRpc]
+    private void DropItemClientRpc()
+    {
+        OnDrop();
+    }
+
+    #endregion
 }

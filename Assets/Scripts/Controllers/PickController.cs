@@ -35,15 +35,14 @@ public class PickController : NetworkBehaviour
         if (transform.parent.TryGetComponent<Player>(out var player))
         {
             holdingItem = item;
-            // item.OnPick(player, transform);
-            item.OnPick(NetworkObject);
+            item.Pick(NetworkObject);
         }
     }
 
     private void DropItem()
     {
         Debug.LogWarning("Dropping item");
-        holdingItem.OnDrop();
+        holdingItem.Drop();
         holdingItem = null;
     }
 }
