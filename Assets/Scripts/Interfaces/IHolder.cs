@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IHolder
 {
-    Transform GetHoldPosition();
+    Transform GetTranform();
 }

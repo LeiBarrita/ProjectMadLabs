@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public abstract class Item : NetworkBehaviour
+public class PickableObject : NetworkBehaviour
 {
+    private Transform HoldPosition;
     public bool CanShrink;
-    protected Player Holder;
-    protected Transform HoldPosition;
 
     private void LateUpdate()
     {
@@ -23,58 +22,37 @@ public abstract class Item : NetworkBehaviour
         );
     }
 
-    public virtual void Drop()
-    {
-        DropItemServerRpc();
-    }
-
-    public virtual void OnDrop()
-    {
-        Debug.LogWarning("Dropped by " + Holder.OwnerClientId);
-        Holder = null;
-        HoldPosition = null;
-    }
-
     public virtual void Pick(NetworkObjectReference playerRef)
     {
         PickItemServerRpc(playerRef);
     }
 
-    public virtual void OnPick(Player player, IHolder holder)
+    public virtual void Drop()
     {
-        // DropItemServerRpc();
-        Transform holdPosition = holder.GetHoldPosition();
-        HoldPosition = holdPosition;
-        Holder = player;
+        DropItemServerRpc();
     }
-
-    public virtual void OnThrow(Vector3 direction, float force)
-    {
-        Debug.Log("Throw!");
-    }
-
-    public virtual void OnHold() { }
-    public virtual void OnActivate() { }
-    public virtual void OnCharge() { }
-    public virtual void OnRelease() { }
 
     #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]
     private void PickItemServerRpc(NetworkObjectReference holdPositionRef)
     {
+        if (holdPositionRef.TryGet(out NetworkObject networkObject))
+        {
+            IHolder holder = networkObject.GetComponent<IHolder>();
+            HoldPosition = holder.GetTranform();
+        }
         PickItemClientRpc(holdPositionRef);
     }
 
     [ClientRpc]
-    private void PickItemClientRpc(NetworkObjectReference holdPositionRef)
+    // protected virtual void PickItemClientRpc(NetworkObjectReference holdPositionRef)
+    protected virtual void PickItemClientRpc(NetworkObjectReference holdPositionRef)
     {
         if (holdPositionRef.TryGet(out NetworkObject networkObject))
         {
-            Player player = networkObject.GetComponent<Player>();
             IHolder holder = networkObject.GetComponent<IHolder>();
-
-            OnPick(player, holder);
+            HoldPosition = holder.GetTranform();
         }
     }
 
@@ -85,9 +63,9 @@ public abstract class Item : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void DropItemClientRpc()
+    protected virtual void DropItemClientRpc()
     {
-        OnDrop();
+        HoldPosition = null;
     }
 
     #endregion

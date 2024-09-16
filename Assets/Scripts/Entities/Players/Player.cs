@@ -40,7 +40,7 @@ public class Player : Creature, IHolder
         Debug.LogWarning("Player Destroyed");
     }
 
-    public Transform GetHoldPosition()
+    public Transform GetTranform()
     {
         Transform holdPositon = transform.Find("Hand").transform;
         return holdPositon;

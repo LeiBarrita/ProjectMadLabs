@@ -1,48 +1,61 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class PickController : NetworkBehaviour
 {
+    [SerializeField] private float raycastRange = 3f;
     [SerializeField] private KeyCode PickKey;
-    private Item holdingItem;
+
+    private PickableObject holdingObject;
+    private Camera mainCamera;
+
+    private void Awake()
+    {
+        mainCamera = Camera.main;
+    }
 
     private void Update()
     {
-        if (!IsOwner) return;
-
-        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(cameraRay.origin, cameraRay.direction * 3, Color.red);
+        if (!IsOwner || mainCamera == null) return;
 
         if (Input.GetKeyDown(PickKey))
         {
-            if (holdingItem != null)
-                DropItem();
-            else if (Physics.Raycast(cameraRay, out RaycastHit hitObject, 3f))
+            if (holdingObject != null)
             {
-                if (hitObject.transform.gameObject.TryGetComponent<Item>(out var pickObject))
-                {
-                    if (holdingItem != null) DropItem();
-                    PickItem(pickObject);
-                }
+                DropObject();
+            }
+            else
+            {
+                TryPickObject();
             }
         }
     }
 
-    private void PickItem(Item item)
+    private void TryPickObject()
     {
-        if (transform.parent.TryGetComponent<Player>(out var player))
+        Ray cameraRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(cameraRay, out RaycastHit hitObject, raycastRange))
         {
-            holdingItem = item;
-            item.Pick(NetworkObject);
+            if (hitObject.transform.TryGetComponent(out PickableObject pickObject))
+            {
+                PickObject(pickObject);
+            }
         }
     }
 
-    private void DropItem()
+    private void PickObject(PickableObject pickableObject)
     {
-        Debug.LogWarning("Dropping item");
-        holdingItem.Drop();
-        holdingItem = null;
+        if (holdingObject == null && transform.parent.TryGetComponent<Player>(out var player))
+        {
+            holdingObject = pickableObject;
+            pickableObject.Pick(NetworkObject);
+        }
+    }
+
+    private void DropObject()
+    {
+        holdingObject.Drop();
+        holdingObject = null;
     }
 }

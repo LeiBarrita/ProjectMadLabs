@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 9103383901786981997}
   - component: {fileID: 7729817694746042810}
   - component: {fileID: 7088901328083108540}
-  - component: {fileID: 4688698265785295762}
   - component: {fileID: -7750735507737706600}
+  - component: {fileID: -8814947329257607014}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -129,19 +129,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &4688698265785295762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1378915786784644751}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10bf5aa98ddf47e46acf8e52aa290b7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CanShrink: 0
 --- !u!54 &-7750735507737706600
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -167,5 +154,18 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!114 &-8814947329257607014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378915786784644751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71e4972059e4dab4e987f2dc2b3ed070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CanShrink: 0
