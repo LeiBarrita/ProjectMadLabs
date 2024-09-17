@@ -4,5 +4,9 @@ using UnityEngine;
 
 public interface IHolder
 {
-    Transform GetTranform();
+    Transform HoldTransform { get; }
+    Transform HolderTransform { get; }
+
+    // Transform GetTranform();
+    // T GetComponent<T>();
 }

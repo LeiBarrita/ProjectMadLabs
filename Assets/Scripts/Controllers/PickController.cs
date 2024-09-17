@@ -46,7 +46,7 @@ public class PickController : NetworkBehaviour
 
     private void PickObject(PickableObject pickableObject)
     {
-        if (holdingObject == null && transform.parent.TryGetComponent<Player>(out var player))
+        if (holdingObject == null)
         {
             holdingObject = pickableObject;
             pickableObject.Pick(NetworkObject);

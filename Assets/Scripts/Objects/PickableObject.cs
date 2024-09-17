@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -5,8 +6,13 @@ using UnityEngine;
 
 public class PickableObject : NetworkBehaviour
 {
+    public event Action<IHolder> OnHold;
+    public event Action<IHolder> OnDrop;
+
     private Transform HoldPosition;
-    public bool CanShrink;
+
+    public IHolder Holder;
+    // public bool CanShrink;
 
     private void LateUpdate()
     {
@@ -37,23 +43,21 @@ public class PickableObject : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void PickItemServerRpc(NetworkObjectReference holdPositionRef)
     {
-        if (holdPositionRef.TryGet(out NetworkObject networkObject))
-        {
-            IHolder holder = networkObject.GetComponent<IHolder>();
-            HoldPosition = holder.GetTranform();
-        }
         PickItemClientRpc(holdPositionRef);
     }
 
     [ClientRpc]
-    // protected virtual void PickItemClientRpc(NetworkObjectReference holdPositionRef)
-    protected virtual void PickItemClientRpc(NetworkObjectReference holdPositionRef)
+    private void PickItemClientRpc(NetworkObjectReference holdPositionRef)
     {
+        if (Holder != null) OnDrop?.Invoke(Holder);
+
         if (holdPositionRef.TryGet(out NetworkObject networkObject))
         {
-            IHolder holder = networkObject.GetComponent<IHolder>();
-            HoldPosition = holder.GetTranform();
+            Holder = networkObject.GetComponent<IHolder>();
+            HoldPosition = Holder.HoldTransform;
         }
+
+        OnHold?.Invoke(Holder);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -63,9 +67,13 @@ public class PickableObject : NetworkBehaviour
     }
 
     [ClientRpc]
-    protected virtual void DropItemClientRpc()
+    private void DropItemClientRpc()
     {
+        OnDrop?.Invoke(Holder);
+
+        Holder = null;
         HoldPosition = null;
+
     }
 
     #endregion

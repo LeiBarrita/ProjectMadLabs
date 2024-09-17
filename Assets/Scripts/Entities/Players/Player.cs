@@ -9,18 +9,26 @@ public class Player : Creature, IHolder
     [Header("Events")]
     public GameEvent onPlayerSpawns;
 
+    private Transform _holdTranform;
+    public Transform HoldTransform
+    {
+        get => _holdTranform;
+    }
 
+    private Transform _holderTranform;
+    public Transform HolderTransform
+    {
+        get => _holderTranform;
+    }
 
     public event Action OnPlayerDestroy;
 
     void Start()
     {
         onPlayerSpawns.Raise(this, null);
-    }
 
-    void Update()
-    {
-
+        _holderTranform = transform;
+        _holdTranform = transform.Find("Hand").transform;
     }
 
     public override void Damage(int damage)
@@ -40,9 +48,9 @@ public class Player : Creature, IHolder
         Debug.LogWarning("Player Destroyed");
     }
 
-    public Transform GetTranform()
-    {
-        Transform holdPositon = transform.Find("Hand").transform;
-        return holdPositon;
-    }
+    // public Transform GetTranform()
+    // {
+    //     Transform holdPositon = transform.Find("Hand").transform;
+    //     return holdPositon;
+    // }
 }

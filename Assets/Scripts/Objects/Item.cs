@@ -5,28 +5,36 @@ using UnityEngine;
 
 public abstract class Item : PickableObject
 {
-    // protected Player Holder;
+    // public override void Pick(NetworkObjectReference playerRef)
+    // {
+    //     IHolder prevHolder = Holder;
 
-    public virtual void OnDrop()
-    {
-        // Debug.LogWarning("Dropped by " + Holder.OwnerClientId);
-        // Holder = null;
-        // HoldPosition = null;
-    }
+    //     base.Pick(playerRef);
 
-    public virtual void OnPick(Player player, IHolder holder)
-    {
-        // Transform holdPosition = holder.GetTranform();
-        // Holder = player;
-    }
+    //     // if (playerRef.TryGet(out NetworkObject networkObject))
+    //     // {
+    //     //     if (networkObject.TryGetComponent(out IHolder holder))
+    //     //         OnPick(holder);
+    //     // }
 
-    public virtual void OnThrow(Vector3 direction, float force)
-    {
-        Debug.Log("Throw!");
-    }
+    //     if (prevHolder != null) OnDrop(prevHolder);
+    //     OnPick(Holder);
+    // }
 
-    public virtual void OnHold() { }
-    public virtual void OnActivate() { }
-    public virtual void OnCharge() { }
-    public virtual void OnRelease() { }
+    // public override void Drop()
+    // {
+    //     IHolder prevHolder = Holder;
+    //     base.Drop();
+
+    //     if (prevHolder != null) OnDrop(prevHolder);
+    // }
+
+    // public virtual void OnDrop(IHolder holder) { }
+    // public virtual void OnPick(IHolder holder) { }
+    // public virtual void OnPick(IHolder holder) { }
+    // public virtual void OnHold() { }
+
+    public virtual void OnActivationDown() { }
+    public virtual void OnActivationStay() { }
+    public virtual void OnActivationUp() { }
 }

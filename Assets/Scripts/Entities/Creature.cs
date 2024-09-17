@@ -9,11 +9,12 @@ public abstract class Creature : NetworkBehaviour
     [SerializeField] private int baseLifePoints;
 
     protected int lifePoints;
-    
+
     public event Action OnPlayerDeath;
     public CreatureState State;
 
-    public enum CreatureState {
+    public enum CreatureState
+    {
         Death,
         Alive,
         Unknow,
