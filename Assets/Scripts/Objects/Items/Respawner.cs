@@ -9,7 +9,7 @@ public class Respawner : PickableObject
     {
         OnHold += Yeet10;
 
-        OnDrop += Yeet100;
+        OnRelease += Yeet100;
     }
 
     private void Yeet10(IHolder holder)

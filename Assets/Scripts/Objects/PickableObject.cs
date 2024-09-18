@@ -6,13 +6,16 @@ using UnityEngine;
 
 public class PickableObject : NetworkBehaviour
 {
-    public event Action<IHolder> OnHold;
-    public event Action<IHolder> OnDrop;
-
-    private Transform HoldPosition;
+    public event Action OnPick; // Action trigger when pick with no previous holder
+    public event Action<IHolder> OnHold; // Action trigger always when pick
+    public event Action OnDrop; // Action trigger when drop on the floor
+    public event Action<IHolder> OnRelease; // Action trigger when previous holder stops holding
 
     public IHolder Holder;
     // public bool CanShrink;
+
+    private Transform HoldPosition;
+
 
     private void LateUpdate()
     {
@@ -41,15 +44,15 @@ public class PickableObject : NetworkBehaviour
     #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]
-    private void PickItemServerRpc(NetworkObjectReference holdPositionRef)
+    protected void PickItemServerRpc(NetworkObjectReference holdPositionRef)
     {
         PickItemClientRpc(holdPositionRef);
     }
 
     [ClientRpc]
-    private void PickItemClientRpc(NetworkObjectReference holdPositionRef)
+    protected void PickItemClientRpc(NetworkObjectReference holdPositionRef)
     {
-        if (Holder != null) OnDrop?.Invoke(Holder);
+        if (Holder != null) OnRelease?.Invoke(Holder);
 
         if (holdPositionRef.TryGet(out NetworkObject networkObject))
         {
@@ -57,6 +60,7 @@ public class PickableObject : NetworkBehaviour
             HoldPosition = Holder.HoldTransform;
         }
 
+        OnPick?.Invoke();
         OnHold?.Invoke(Holder);
     }
 
@@ -69,7 +73,8 @@ public class PickableObject : NetworkBehaviour
     [ClientRpc]
     private void DropItemClientRpc()
     {
-        OnDrop?.Invoke(Holder);
+        OnRelease?.Invoke(Holder);
+        OnDrop?.Invoke();
 
         Holder = null;
         HoldPosition = null;
