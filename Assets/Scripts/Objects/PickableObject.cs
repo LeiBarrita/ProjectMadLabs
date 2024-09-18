@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PickableObject : NetworkBehaviour
 {
-    public event Action OnPick; // Action trigger when pick with no previous holder
+    // public event Action OnPick; // Action trigger when pick with no previous holder
     public event Action<IHolder> OnHold; // Action trigger always when pick
     public event Action OnDrop; // Action trigger when drop on the floor
     public event Action<IHolder> OnRelease; // Action trigger when previous holder stops holding
@@ -69,7 +69,7 @@ public class PickableObject : NetworkBehaviour
             rb.isKinematic = true;
         }
 
-        OnPick?.Invoke();
+        // OnPick?.Invoke();
         OnHold?.Invoke(Holder);
     }
 
