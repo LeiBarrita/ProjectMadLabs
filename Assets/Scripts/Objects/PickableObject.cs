@@ -15,7 +15,15 @@ public class PickableObject : NetworkBehaviour
     // public bool CanShrink;
 
     private Transform HoldPosition;
+    private Rigidbody rb;
 
+    private void Awake()
+    {
+        rb = transform.GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        rb.freezeRotation = true;
+        rb.isKinematic = false;
+    }
 
     private void LateUpdate()
     {
@@ -30,6 +38,11 @@ public class PickableObject : NetworkBehaviour
             followPos.rotation
         );
     }
+
+    // protected virtual void FallSimulation()
+    // {
+
+    // }
 
     public virtual void Pick(NetworkObjectReference playerRef)
     {
@@ -58,6 +71,7 @@ public class PickableObject : NetworkBehaviour
         {
             Holder = networkObject.GetComponent<IHolder>();
             HoldPosition = Holder.HoldTransform;
+            rb.isKinematic = true;
         }
 
         OnPick?.Invoke();
@@ -79,6 +93,7 @@ public class PickableObject : NetworkBehaviour
         Holder = null;
         HoldPosition = null;
 
+        rb.isKinematic = false;
     }
 
     #endregion
