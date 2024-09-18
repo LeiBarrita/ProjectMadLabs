@@ -160,6 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raycastRange: 3
   PickKey: 101
+  ActivateKey: 113
 --- !u!1 &5377694722212985521
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,7 +354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1702276614
+  GlobalObjectIdHash: 3629010415
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1

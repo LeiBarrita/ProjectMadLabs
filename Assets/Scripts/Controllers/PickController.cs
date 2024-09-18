@@ -6,8 +6,10 @@ public class PickController : NetworkBehaviour
 {
     [SerializeField] private float raycastRange = 3f;
     [SerializeField] private KeyCode PickKey;
+    [SerializeField] private KeyCode ActivateKey;
 
     private PickableObject holdingObject;
+    private ActivableObject item;
     private Camera mainCamera;
 
     private void Awake()
@@ -30,6 +32,14 @@ public class PickController : NetworkBehaviour
                 TryPickObject();
             }
         }
+
+        if (item != null)
+        {
+            if (Input.GetKeyDown(ActivateKey))
+                item.ActivateKeyDown();
+            if (Input.GetKeyUp(ActivateKey))
+                item.ActivateKeyUp();
+        }
     }
 
     private void TryPickObject()
@@ -41,16 +51,18 @@ public class PickController : NetworkBehaviour
             {
                 PickObject(pickObject);
             }
+
+            if (hitObject.transform.TryGetComponent(out ActivableObject activableObject))
+                item = activableObject;
         }
     }
 
     private void PickObject(PickableObject pickableObject)
     {
-        if (holdingObject == null)
-        {
-            holdingObject = pickableObject;
-            pickableObject.Pick(NetworkObject);
-        }
+        if (holdingObject != null) return;
+
+        holdingObject = pickableObject;
+        pickableObject.Pick(NetworkObject);
     }
 
     private void DropObject()

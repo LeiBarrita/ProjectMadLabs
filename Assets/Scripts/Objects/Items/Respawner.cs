@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Respawner : PickableObject
+public class Respawner : ActivableObject
 {
-    private void Start()
+    protected override void Start()
     {
-        OnHold += Yeet10;
+        base.Start();
 
+        OnHold += Yeet10;
         OnRelease += Yeet100;
+
+        OnActivationDown += Ascend;
+        OnActivationUp += ResetPosition;
+
+        Debug.Log("Respawner Created");
     }
+
 
     private void Yeet10(IHolder holder)
     {
@@ -22,15 +30,13 @@ public class Respawner : PickableObject
         holder.HolderTransform.GetComponent<Rigidbody>().AddForce(Vector3.up * 100, ForceMode.Impulse);
     }
 
-    // public override void OnDrop(IHolder holder)
-    // {
-    //     holder.HolderTransform.GetComponent<Rigidbody>().AddForce(Vector3.up * 100, ForceMode.Impulse);
-    //     // base.OnDrop(holder);
-    // }
+    private void Ascend(IHolder holder)
+    {
+        holder.HolderTransform.position += Vector3.up * 0.5f;
+    }
 
-    // public override void OnPick(IHolder holder)
-    // {
-    //     // base.OnPick(holder);
-    //     holder.HolderTransform.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Impulse);
-    // }
+    private void ResetPosition(IHolder holder)
+    {
+        holder.HolderTransform.position = Vector3.zero;
+    }
 }
