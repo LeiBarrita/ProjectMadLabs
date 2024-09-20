@@ -14,7 +14,7 @@ public abstract class ActivableObject : PickableObject
     protected virtual void Start()
     {
         OnRelease += ResetActivation;
-        Debug.Log("ActivableObject Created");
+        // Debug.Log("ActivableObject Created");
     }
 
     public virtual void ActivateKeyDown()
