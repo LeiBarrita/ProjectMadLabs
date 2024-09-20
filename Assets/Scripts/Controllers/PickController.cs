@@ -67,12 +67,19 @@ public class PickController : NetworkBehaviour
         if (holdingObject != null) return;
 
         holdingObject = pickableObject;
+        holdingObject.OnRelease += ReleaseObject;
+
         pickableObject.Pick(NetworkObject);
     }
 
     private void DropObject()
     {
         holdingObject.Drop();
+        holdingObject = null;
+    }
+
+    private void ReleaseObject(IHolder holder)
+    {
         holdingObject = null;
     }
 }
