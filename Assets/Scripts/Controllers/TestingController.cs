@@ -19,5 +19,10 @@ public class TestingController : NetworkBehaviour
         {
             NetworkRpcManager.Instance.SpawnNetworkItem(1);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            NetworkRpcManager.Instance.SpawnNetworkItem(2);
+        }
     }
 }
+

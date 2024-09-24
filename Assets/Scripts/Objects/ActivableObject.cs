@@ -9,6 +9,7 @@ public abstract class ActivableObject : PickableObject
     public event Action<IHolder> OnActivationDown;
     public event Action<IHolder> OnActivationUp;
 
+    [NonSerialized]
     public bool Active = false;
 
     protected virtual void Start()

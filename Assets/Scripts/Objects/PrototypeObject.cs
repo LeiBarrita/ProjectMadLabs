@@ -2,13 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
 
 public abstract class PrototypeObject : ActivableObject
 {
-    private NetworkVariable<int> randomNum = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    public int failureProbability = 0;
+    private NetworkVariable<int> failureProbability = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public int failureIncrement = 10;
+    public int failureSafePoint = 70;
 
     public event Action OnFailure;
 
@@ -16,14 +15,43 @@ public abstract class PrototypeObject : ActivableObject
     {
         base.Start();
 
-        OnActivationDown += CheckFailure;
+        OnActivationDown += AdvanceFailure;
     }
 
-    protected void CheckFailure(IHolder holder)
+    protected void AdvanceFailure(IHolder holder)
     {
-        randomNum.Value = UnityEngine.Random.Range(0, 100);
+        UnityEngine.Debug.Log("Failure Prob: " + failureProbability.Value);
+        if (failureSafePoint < failureProbability.Value)
+        {
+            int failValue = UnityEngine.Random.Range(0, 120);
 
-        if (randomNum.Value < failureProbability)
-            OnFailure?.Invoke();
+            UnityEngine.Debug.Log("Failure Value: " + failValue);
+            if (failValue < failureProbability.Value)
+                Fail();
+        }
+
+        failureProbability.Value += failureIncrement;
+        failureProbability.Value = Math.Clamp(failureProbability.Value, 0, 100);
     }
+
+    protected void Fail()
+    {
+        TriggerFailureServerRpc();
+    }
+
+    #region RPCs
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void TriggerFailureServerRpc()
+    {
+        TriggerFailureClientRpc();
+    }
+
+    [ClientRpc]
+    protected void TriggerFailureClientRpc()
+    {
+        OnFailure?.Invoke();
+    }
+
+    #endregion
 }

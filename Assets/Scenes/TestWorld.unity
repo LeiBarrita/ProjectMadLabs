@@ -661,6 +661,7 @@ MonoBehaviour:
   spawnableObjects:
   - {fileID: 6298017921013629410, guid: 7af85731066f3d442b448092b5817796, type: 3}
   - {fileID: 1378915786784644751, guid: 5bdf74445ccebed47ac7939d8d035073, type: 3}
+  - {fileID: 453110468014170362, guid: e7191061fe1e8c944ac15f9e4c7dab8b, type: 3}
 --- !u!114 &929886295
 MonoBehaviour:
   m_ObjectHideFlags: 0
