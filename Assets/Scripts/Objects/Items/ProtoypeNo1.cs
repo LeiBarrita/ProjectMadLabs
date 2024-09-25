@@ -19,13 +19,31 @@ public class ProtoypeNo1 : PrototypeObject
         // holder.HolderTransform.position += Vector3.up * 10;
     }
 
-    private async void Explode()
+    private void Explode()
     {
-        Debug.LogWarning("Failure Trigger");
-
-        await Task.Delay(1000);
-        // Destroy(this);
-        // transform.GetComponent<NetworkObject>().Despawn();
-        NetworkObject.Despawn();
+        // DespawnObjectServerRpc();
     }
+
+    // public async Task DestroyNetworkObject()
+    // {
+    //     await Task.Delay(1000);
+    //     NetworkObject.Despawn();
+    // }
+
+    // #region RPCs
+
+    // [ServerRpc(RequireOwnership = false)]
+    // protected void DespawnObjectServerRpc()
+    // {
+    //     DespawnObjectClientRpc();
+    // }
+
+    // [ClientRpc]
+    // protected void DespawnObjectClientRpc()
+    // {
+    //     Debug.LogWarning("Failure Trigger");
+    //     _ = DestroyNetworkObject();
+    // }
+
+    // #endregion
 }

@@ -1,13 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
+using UnityEngine;
 
 public abstract class PrototypeObject : ActivableObject
 {
     private NetworkVariable<int> failureProbability = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private bool IsBroken = false;
     public int failureIncrement = 10;
     public int failureSafePoint = 70;
+    public int triggerFailureDelay = 2000;
 
     public event Action OnFailure;
 
@@ -16,6 +20,19 @@ public abstract class PrototypeObject : ActivableObject
         base.Start();
 
         OnActivationDown += AdvanceFailure;
+        // OnFailure += Shrink;
+    }
+
+    public override void ActivateKeyDown()
+    {
+        if (IsBroken) return;
+        base.ActivateKeyDown();
+    }
+
+    public override void ActivateKeyUp()
+    {
+        if (IsBroken) return;
+        base.ActivateKeyUp();
     }
 
     protected void AdvanceFailure(IHolder holder)
@@ -39,6 +56,21 @@ public abstract class PrototypeObject : ActivableObject
         TriggerFailureServerRpc();
     }
 
+    protected async Task TriggerFailure()
+    {
+        // Debug.LogWarning("Failure Trigger");
+        await Task.Delay(triggerFailureDelay);
+        OnFailure?.Invoke();
+
+        await Task.Delay(5000);
+        NetworkObject.Despawn();
+    }
+
+    // protected void Shrink()
+    // {
+    //     transform.localScale = Vector3.zero;
+    // }
+
     #region RPCs
 
     [ServerRpc(RequireOwnership = false)]
@@ -50,7 +82,8 @@ public abstract class PrototypeObject : ActivableObject
     [ClientRpc]
     protected void TriggerFailureClientRpc()
     {
-        OnFailure?.Invoke();
+        IsBroken = true;
+        _ = TriggerFailure();
     }
 
     #endregion
