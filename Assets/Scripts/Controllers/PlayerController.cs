@@ -93,7 +93,7 @@ public class PlayerController : NetworkBehaviour
 
         if (Input.GetKey(jumpKey) && grounded)
         {
-            Debug.Log("Jump Press!");
+            // Debug.Log("Jump Press!");
             // readyToJump = false;
             grounded = false;
             Jump();
@@ -121,7 +121,7 @@ public class PlayerController : NetworkBehaviour
 
     private void Jump()
     {
-        Debug.Log("Jumping!");
+        // Debug.Log("Jumping!");
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }

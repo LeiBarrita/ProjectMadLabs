@@ -6,7 +6,8 @@ public interface IHolder
 {
     Transform HoldTransform { get; }
     Transform HolderTransform { get; }
-
-    // Transform GetTranform();
-    // T GetComponent<T>();
+    PickableObject PickedObject { get; }
+    public void PickObject(PickableObject pickableObject);
+    public void ReleaseObject(IHolder holder);
+    public void DropObject();
 }

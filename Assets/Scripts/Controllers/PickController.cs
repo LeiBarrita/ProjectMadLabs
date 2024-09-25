@@ -8,11 +8,12 @@ public class PickController : NetworkBehaviour
     [SerializeField] private KeyCode PickKey;
     [SerializeField] private KeyCode ActivateKey;
 
-    private PickableObject holdingObject;
+    private IHolder playerHolder;
     private Camera mainCamera;
 
     private void Awake()
     {
+        playerHolder = transform.GetComponent<IHolder>();
         mainCamera = Camera.main;
     }
 
@@ -28,9 +29,9 @@ public class PickController : NetworkBehaviour
     {
         if (Input.GetKeyDown(PickKey))
         {
-            if (holdingObject != null)
+            if (playerHolder.PickedObject != null)
             {
-                DropObject();
+                playerHolder.DropObject();
             }
             else
             {
@@ -41,7 +42,7 @@ public class PickController : NetworkBehaviour
 
     private void HandleActivateInput()
     {
-        if (holdingObject is ActivableObject activableObject)
+        if (playerHolder.PickedObject is ActivableObject activableObject)
         {
             if (Input.GetKeyDown(ActivateKey))
                 activableObject.ActivateKeyDown();
@@ -57,29 +58,10 @@ public class PickController : NetworkBehaviour
         {
             if (hitObject.transform.TryGetComponent(out PickableObject pickObject))
             {
-                PickObject(pickObject);
+                playerHolder.PickObject(pickObject);
             }
         }
     }
 
-    private void PickObject(PickableObject pickableObject)
-    {
-        if (holdingObject != null) return;
 
-        holdingObject = pickableObject;
-        holdingObject.OnRelease += ReleaseObject;
-
-        pickableObject.Pick(NetworkObject);
-    }
-
-    private void DropObject()
-    {
-        holdingObject.Drop();
-        holdingObject = null;
-    }
-
-    private void ReleaseObject(IHolder holder)
-    {
-        holdingObject = null;
-    }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -21,24 +22,53 @@ public class Player : Creature, IHolder
         get => _holderTranform;
     }
 
+    private PickableObject _pickedObject;
+    public PickableObject PickedObject
+    {
+        get => _pickedObject;
+    }
+
     public event Action OnPlayerDestroy;
 
-    void Start()
+    override protected void Start()
     {
+        base.Start();
         onPlayerSpawns.Raise(this, null);
+        OnDeath += SimulateDeath;
 
         _holderTranform = transform;
         _holdTranform = transform.Find("Hand").transform;
     }
 
-    public override void Damage(int damage)
+    // public override void Damage(int damage)
+    // {
+    //     if (LifePoints > 10 && damage > 10)
+    //         LifePoints = 1;
+    //     else
+    //     {
+    //         base.Damage(damage);
+    //     }
+    // }
+
+    public void PickObject(PickableObject pickableObject)
     {
-        if (lifePoints > 10 && damage > 10)
-            lifePoints = 1;
-        else
-        {
-            base.Damage(damage);
-        }
+        if (_pickedObject != null) return;
+
+        _pickedObject = pickableObject;
+        _pickedObject.OnRelease += ReleaseObject;
+
+        pickableObject.Pick(NetworkObject);
+    }
+
+    public void DropObject()
+    {
+        _pickedObject.Drop();
+        _pickedObject = null;
+    }
+
+    public void ReleaseObject(IHolder holder)
+    {
+        _pickedObject = null;
     }
 
     public override void OnDestroy()
@@ -48,9 +78,31 @@ public class Player : Creature, IHolder
         Debug.LogWarning("Player Destroyed");
     }
 
-    // public Transform GetTranform()
-    // {
-    //     Transform holdPositon = transform.Find("Hand").transform;
-    //     return holdPositon;
-    // }
+    #region  Death Simulation
+    private void SimulateDeath()
+    {
+        DelayedRespawn();
+    }
+
+    private async void DelayedRespawn()
+    {
+        // Rigidbody rb = transform.GetComponent<Rigidbody>();
+        PlayerController pc = transform.GetComponent<PlayerController>();
+
+        pc.enabled = false;
+        // rb.constraints = RigidbodyConstraints.None;
+        // rb.freezeRotation = false;
+        // rb.AddForce(Vector3.up * 50, ForceMode.Impulse);
+        // rb.AddTorque(Vector3.one * 20, ForceMode.Impulse);
+        // rb.isKinematic = false;
+
+        await Task.Delay(3000);
+        transform.position = Vector3.zero;
+        // rb.constraints = RigidbodyConstraints.None;
+        // rb.freezeRotation = true;
+        // rb.velocity = Vector3.zero;
+        pc.enabled = true;
+    }
+
+    #endregion
 }

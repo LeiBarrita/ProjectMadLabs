@@ -123,7 +123,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4901371040632968869}
-  - component: {fileID: 2409212141815554228}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -146,21 +145,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8750837744364983451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2409212141815554228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3535567457066625370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7f079e906b98ba4c97b3c165fe4ea56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  raycastRange: 3
-  PickKey: 101
-  ActivateKey: 113
 --- !u!1 &5377694722212985521
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +299,7 @@ GameObject:
   - component: {fileID: -8880941498102828268}
   - component: {fileID: -1826180228671786347}
   - component: {fileID: -3852353434711428388}
+  - component: {fileID: 1681701603197982973}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -406,8 +391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da64eba64565b574298f874af2fa3940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLifePoints: 100
-  State: 1
+  MaxLifePoints: 100
   onPlayerSpawns: {fileID: 11400000, guid: b5a181611cff5044c8461eaf1a7b74c9, type: 2}
 --- !u!54 &-9182048056404189328
 Rigidbody:
@@ -434,7 +418,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 1
 --- !u!114 &-8880941498102828268
 MonoBehaviour:
@@ -481,3 +465,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefabs: []
+--- !u!114 &1681701603197982973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346239594762880011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7f079e906b98ba4c97b3c165fe4ea56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  raycastRange: 3
+  PickKey: 101
+  ActivateKey: 113

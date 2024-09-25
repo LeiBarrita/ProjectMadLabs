@@ -6,37 +6,57 @@ using UnityEngine;
 
 public abstract class Creature : NetworkBehaviour
 {
-    [SerializeField] private int baseLifePoints;
+    private NetworkVariable<int> _lifePoints = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    protected int lifePoints;
-
-    public event Action OnPlayerDeath;
-    public CreatureState State;
-
-    public enum CreatureState
+    public event Action OnDeath;
+    public int MaxLifePoints = 100;
+    public int LifePoints
     {
-        Death,
-        Alive,
-        Unknow,
+        get { return _lifePoints.Value; }
+        set { _lifePoints.Value = Math.Clamp(value, 0, MaxLifePoints); }
     }
+
+    protected virtual void Start()
+    {
+        LifePoints = MaxLifePoints;
+    }
+
+    // public CreatureState State;
+
+    // public enum CreatureState
+    // {
+    //     Death,
+    //     Alive,
+    //     Unknow,
+    // }
 
     public virtual void Damage(int damage)
     {
-        Debug.Log("Damage received: " + damage);
+        // Debug.Log("Damage received: " + damage);
+        LifePoints -= damage;
 
-        lifePoints -= damage;
-
-        if (lifePoints <= 0)
-        {
-            OnDeath();
-        }
+        if (LifePoints <= 0) TriggerDeath();
     }
 
-    public virtual void OnDeath()
+    protected virtual void TriggerDeath()
     {
-        // Added death effects
-        OnPlayerDeath?.Invoke();
-
-        Debug.Log("Dies :skull:");
+        TriggerDeathServerRpc();
     }
+
+    #region RPCs
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void TriggerDeathServerRpc()
+    {
+        TriggerDeathClientRpc();
+    }
+
+    [ClientRpc]
+    protected void TriggerDeathClientRpc()
+    {
+        // Debug.Log("Creature Dead");
+        OnDeath?.Invoke();
+    }
+
+    #endregion
 }
