@@ -35,6 +35,7 @@ public class Player : Creature, IHolder
         base.Start();
         onPlayerSpawns.Raise(this, null);
         OnDeath += SimulateDeath;
+        OnDeath += DropOnDeath;
 
         _holderTranform = transform;
         _holdTranform = transform.Find("Hand").transform;
@@ -60,6 +61,11 @@ public class Player : Creature, IHolder
         pickableObject.Pick(NetworkObject);
     }
 
+    public void DropOnDeath(Creature creature)
+    {
+        DropObject();
+    }
+
     public void DropObject()
     {
         _pickedObject.Drop();
@@ -79,7 +85,7 @@ public class Player : Creature, IHolder
     }
 
     #region  Death Simulation
-    private void SimulateDeath()
+    private void SimulateDeath(Creature creature)
     {
         DelayedRespawn();
     }
@@ -88,8 +94,10 @@ public class Player : Creature, IHolder
     {
         // Rigidbody rb = transform.GetComponent<Rigidbody>();
         PlayerController pc = transform.GetComponent<PlayerController>();
+        PickController pickc = transform.GetComponent<PickController>();
 
         pc.enabled = false;
+        pickc.enabled = false;
         // rb.constraints = RigidbodyConstraints.None;
         // rb.freezeRotation = false;
         // rb.AddForce(Vector3.up * 50, ForceMode.Impulse);
@@ -101,6 +109,7 @@ public class Player : Creature, IHolder
         // rb.constraints = RigidbodyConstraints.None;
         // rb.freezeRotation = true;
         // rb.velocity = Vector3.zero;
+        pickc.enabled = true;
         pc.enabled = true;
     }
 

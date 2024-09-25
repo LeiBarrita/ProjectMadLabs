@@ -8,7 +8,7 @@ public abstract class Creature : NetworkBehaviour
 {
     private NetworkVariable<int> _lifePoints = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    public event Action OnDeath;
+    public event Action<Creature> OnDeath;
     public int MaxLifePoints = 100;
     public int LifePoints
     {
@@ -55,7 +55,7 @@ public abstract class Creature : NetworkBehaviour
     protected void TriggerDeathClientRpc()
     {
         // Debug.Log("Creature Dead");
-        OnDeath?.Invoke();
+        OnDeath?.Invoke(this);
     }
 
     #endregion
