@@ -35,7 +35,7 @@ public class Player : Creature, IHolder
         base.Start();
         onPlayerSpawns.Raise(this, null);
         OnDeath += SimulateDeath;
-        OnDeath += DropOnDeath;
+        // OnDeath += DropOnDeath;
 
         _holderTranform = transform;
         _holdTranform = transform.Find("Hand").transform;
@@ -61,13 +61,15 @@ public class Player : Creature, IHolder
         pickableObject.Pick(NetworkObject);
     }
 
-    public void DropOnDeath(Creature creature)
-    {
-        DropObject();
-    }
+    // public void DropOnDeath(Creature creature)
+    // {
+    //     DropObject();
+    // }
 
     public void DropObject()
     {
+        if (_pickedObject == null) return;
+
         _pickedObject.Drop();
         _pickedObject = null;
     }

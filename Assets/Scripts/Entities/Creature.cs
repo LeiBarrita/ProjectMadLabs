@@ -32,7 +32,6 @@ public abstract class Creature : NetworkBehaviour
 
     public virtual void Damage(int damage)
     {
-        // Debug.Log("Damage received: " + damage);
         LifePoints -= damage;
 
         if (LifePoints <= 0) TriggerDeath();
@@ -54,7 +53,9 @@ public abstract class Creature : NetworkBehaviour
     [ClientRpc]
     protected void TriggerDeathClientRpc()
     {
-        // Debug.Log("Creature Dead");
+        if (this is IHolder holder)
+            holder.DropObject();
+
         OnDeath?.Invoke(this);
     }
 

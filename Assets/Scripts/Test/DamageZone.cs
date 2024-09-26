@@ -6,6 +6,7 @@ public class DamageZone : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
+        if (other.transform.parent == null) return;
         Creature victim = other.transform.parent.GetComponent<Player>();
 
         if (victim == null) return;
