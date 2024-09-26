@@ -12,6 +12,6 @@ public class DamageZone : MonoBehaviour
         if (victim == null) return;
 
         Debug.LogWarning("Damaging Creature");
-        victim.Damage(100);
+        victim.Damage(50);
     }
 }

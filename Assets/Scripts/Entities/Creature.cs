@@ -16,24 +16,24 @@ public abstract class Creature : NetworkBehaviour
         set { _lifePoints.Value = Math.Clamp(value, 0, MaxLifePoints); }
     }
 
-    protected virtual void Start()
-    {
-        LifePoints = MaxLifePoints;
-    }
-
-    // public CreatureState State;
-
-    // public enum CreatureState
+    // public CreatureStatus Status = CreatureStatus.Alive;
+    // public enum CreatureStatus
     // {
     //     Death,
     //     Alive,
     //     Unknow,
     // }
 
+    protected virtual void Start()
+    {
+        LifePoints = MaxLifePoints;
+    }
+
     public virtual void Damage(int damage)
     {
-        LifePoints -= damage;
+        if (LifePoints <= 0) return;
 
+        LifePoints -= damage;
         if (LifePoints <= 0) TriggerDeath();
     }
 
@@ -53,10 +53,14 @@ public abstract class Creature : NetworkBehaviour
     [ClientRpc]
     protected void TriggerDeathClientRpc()
     {
+        // Status = CreatureStatus.Death;
+
         if (this is IHolder holder)
             holder.DropObject();
 
         OnDeath?.Invoke(this);
+
+        // NetworkObject.Despawn();
     }
 
     #endregion

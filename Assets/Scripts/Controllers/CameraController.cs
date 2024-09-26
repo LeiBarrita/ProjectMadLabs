@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        // Cursor.visible = false;
+        Cursor.visible = true;
     }
 
     void Update()
@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour
         // pickControl?.Controls();
     }
 
-    public void onPlayerSpawns(Component sender, object data)
+    public void OnPlayerSpawns(Component sender, object data)
     {
         if (sender is Player player)
         {

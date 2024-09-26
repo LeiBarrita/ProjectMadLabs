@@ -940,8 +940,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 963194229}
-        m_TargetAssemblyTypeName: PlayerCamera, Assembly-CSharp
-        m_MethodName: onPlayerSpawns
+        m_TargetAssemblyTypeName: CameraController, Assembly-CSharp
+        m_MethodName: OnPlayerSpawns
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
