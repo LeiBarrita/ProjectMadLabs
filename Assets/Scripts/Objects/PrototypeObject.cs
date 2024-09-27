@@ -9,6 +9,11 @@ public abstract class PrototypeObject : ActivableObject
 {
     private NetworkVariable<int> failureProbability = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private bool IsBroken = false;
+
+    [SerializeField]
+    protected bool DestoryOnFailure = false;
+    protected int DestroyDelay = 5000;
+
     public int failureIncrement = 10;
     public int failureSafePoint = 70;
     public int triggerFailureDelay = 2000;
@@ -37,12 +42,12 @@ public abstract class PrototypeObject : ActivableObject
 
     protected void AdvanceFailure(IHolder holder)
     {
-        UnityEngine.Debug.Log("Failure Prob: " + failureProbability.Value);
+        Debug.Log("Failure Prob: " + failureProbability.Value);
         if (failureSafePoint < failureProbability.Value)
         {
             int failValue = UnityEngine.Random.Range(0, 120);
 
-            UnityEngine.Debug.Log("Failure Value: " + failValue);
+            Debug.Log("Failure Value: " + failValue);
             if (failValue < failureProbability.Value)
                 Fail();
         }
@@ -62,7 +67,16 @@ public abstract class PrototypeObject : ActivableObject
         await Task.Delay(triggerFailureDelay);
         OnFailure?.Invoke();
 
-        await Task.Delay(5000);
+        if (DestoryOnFailure) DestroyPrototypeAsync();
+    }
+
+    protected virtual async void DestroyPrototypeAsync()
+    {
+        if (transform.TryGetComponent(out Rigidbody rigidbody)) rigidbody.isKinematic = true;
+        transform.localScale = Vector3.zero;
+        Holder?.DropObject();
+
+        await Task.Delay(DestroyDelay);
         NetworkObject.Despawn();
     }
 

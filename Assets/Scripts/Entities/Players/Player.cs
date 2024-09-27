@@ -98,6 +98,7 @@ public class Player : Creature, IHolder
         transform.position = Vector3.zero;
         pickc.enabled = true;
         pc.enabled = true;
+        LifePoints = MaxLifePoints;
     }
 
     #endregion

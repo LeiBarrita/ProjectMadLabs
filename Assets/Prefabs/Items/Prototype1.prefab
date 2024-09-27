@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d49a22f06d12de4e9b95c47342d066f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestoryOnFailure: 1
   failureIncrement: 20
   failureSafePoint: 70
   triggerFailureDelay: 2000
