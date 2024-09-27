@@ -83,7 +83,7 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject == null) return;
 
         _inventory.Add(key, _pickedObject);
-        ShrinkObject(_pickedObject);
+        _pickedObject.Store();
         ReleaseObject(this);
     }
 
@@ -92,20 +92,8 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject != null) return;
         if (!_inventory.Remove(key, out PickableObject unloadObject)) return;
 
+        unloadObject.Dump();
         PickObject(unloadObject);
-        GrowObject(unloadObject);
-    }
-
-    private void ShrinkObject(PickableObject objectToShrink)
-    {
-        objectToShrink.transform.GetComponent<Renderer>().enabled = false;
-        objectToShrink.transform.GetComponent<Collider>().enabled = false;
-    }
-
-    private void GrowObject(PickableObject objectToGrow)
-    {
-        objectToGrow.transform.GetComponent<Renderer>().enabled = true;
-        objectToGrow.transform.GetComponent<Collider>().enabled = true;
     }
 
     #endregion

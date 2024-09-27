@@ -49,15 +49,27 @@ public class PickableObject : NetworkBehaviour
         DropItemServerRpc();
     }
 
-    // public virtual void Store()
-    // {
-    //     // DropItemServerRpc();
-    // }
+    public virtual void Store()
+    {
+        // Note: move to client RPC
+        transform.GetComponent<Renderer>().enabled = false;
+        transform.GetComponent<Collider>().enabled = false;
+        OnRelease?.Invoke(Holder);
+        // OnDrop?.Invoke();
 
-    // public virtual void Dump()
-    // {
-    //     // DropItemServerRpc();
-    // }
+        Holder = null;
+        HoldPosition = null;
+
+        // rb.isKinematic = false;
+    }
+
+    public virtual void Dump()
+    {
+        // Note: move to client RPC
+        transform.GetComponent<Renderer>().enabled = true;
+        transform.GetComponent<Collider>().enabled = true;
+        // DropItemServerRpc();
+    }
 
     #region  RPCs
 
