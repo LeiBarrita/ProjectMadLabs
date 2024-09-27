@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3629010415
+  GlobalObjectIdHash: 1702276614
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -396,7 +396,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raycastRange: 3
   PickKey: 101
-  ActivateKey: 113
+  StoreKey: 114
+  ActivateKey: 323
 --- !u!1001 &7236831818151892687
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,39 +1,32 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Player : Creature, IHolder
+public class Player : Creature, IHolder, IObjectKeeper
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
-
-    private Transform _holdTranform;
-    public Transform HoldTransform
-    {
-        get => _holdTranform;
-    }
-
-    private Transform _holderTranform;
-    public Transform HolderTransform
-    {
-        get => _holderTranform;
-    }
-
-    private PickableObject _pickedObject;
-    public PickableObject PickedObject
-    {
-        get => _pickedObject;
-    }
-
     public event Action OnPlayerDestroy;
+
+    // IHolder Properties
+    private Transform _holdTranform;
+    public Transform HoldTransform { get => _holdTranform; }
+    private Transform _holderTranform;
+    public Transform HolderTransform { get => _holderTranform; }
+    private PickableObject _pickedObject;
+    public PickableObject PickedObject { get => _pickedObject; }
+
+    // IObjectKeeper Properties
+    public Dictionary<string, PickableObject> _inventory = new();
+    public Dictionary<string, PickableObject> Inventory { get => _inventory; }
 
     override protected void Start()
     {
         base.Start();
         onPlayerSpawns.Raise(this, null);
         OnDeath += SimulateDeath;
-        // OnDeath += DropOnDeath;
 
         _holderTranform = transform;
         _holdTranform = transform.Find("Hand").transform;
@@ -49,6 +42,14 @@ public class Player : Creature, IHolder
     //     }
     // }
 
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        OnPlayerDestroy?.Invoke();
+    }
+
+    #region IHolder
+
     public void PickObject(PickableObject pickableObject)
     {
         if (_pickedObject != null) return;
@@ -57,6 +58,7 @@ public class Player : Creature, IHolder
         _pickedObject.OnRelease += ReleaseObject;
 
         pickableObject.Pick(NetworkObject);
+        Debug.Log("Object Picked");
     }
 
     public void DropObject()
@@ -72,12 +74,41 @@ public class Player : Creature, IHolder
         _pickedObject = null;
     }
 
-    public override void OnDestroy()
+    #endregion
+
+    #region IObjectKeeper
+
+    public void StorePickedObject(string key)
     {
-        base.OnDestroy();
-        OnPlayerDestroy?.Invoke();
-        // Debug.LogWarning("Player Destroyed");
+        if (_pickedObject == null) return;
+
+        _inventory.Add(key, _pickedObject);
+        ShrinkObject(_pickedObject);
+        ReleaseObject(this);
     }
+
+    public void UnloadObject(string key)
+    {
+        if (_pickedObject != null) return;
+        if (!_inventory.Remove(key, out PickableObject unloadObject)) return;
+
+        PickObject(unloadObject);
+        GrowObject(unloadObject);
+    }
+
+    private void ShrinkObject(PickableObject objectToShrink)
+    {
+        objectToShrink.transform.GetComponent<Renderer>().enabled = false;
+        objectToShrink.transform.GetComponent<Collider>().enabled = false;
+    }
+
+    private void GrowObject(PickableObject objectToGrow)
+    {
+        objectToGrow.transform.GetComponent<Renderer>().enabled = true;
+        objectToGrow.transform.GetComponent<Collider>().enabled = true;
+    }
+
+    #endregion
 
     #region  Death Simulation
     private void SimulateDeath(Creature creature)

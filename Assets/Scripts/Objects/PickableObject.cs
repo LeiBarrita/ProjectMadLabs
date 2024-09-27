@@ -49,6 +49,16 @@ public class PickableObject : NetworkBehaviour
         DropItemServerRpc();
     }
 
+    // public virtual void Store()
+    // {
+    //     // DropItemServerRpc();
+    // }
+
+    // public virtual void Dump()
+    // {
+    //     // DropItemServerRpc();
+    // }
+
     #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]

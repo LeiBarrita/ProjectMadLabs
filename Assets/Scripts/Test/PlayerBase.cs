@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-// Deprecated, using Player instead
+// Deprecated, use Player instead
 public class BasePlayer : NetworkBehaviour
 {
     [Header("Events")]
