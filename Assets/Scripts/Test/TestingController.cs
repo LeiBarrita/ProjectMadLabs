@@ -11,15 +11,15 @@ public class TestingController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             NetworkRpcManager.Instance.SpawnNetworkItem(0);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             NetworkRpcManager.Instance.SpawnNetworkItem(1);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             NetworkRpcManager.Instance.SpawnNetworkItem(2);
         }

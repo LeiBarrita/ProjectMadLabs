@@ -10,6 +10,8 @@ public class Player : Creature, IHolder, IObjectKeeper
     public GameEvent onPlayerSpawns;
     public event Action OnPlayerDestroy;
 
+    // private readonly int _inventorySize = 4;
+
     // IHolder Properties
     private Transform _holdTranform;
     public Transform HoldTransform { get => _holdTranform; }
@@ -19,7 +21,7 @@ public class Player : Creature, IHolder, IObjectKeeper
     public PickableObject PickedObject { get => _pickedObject; }
 
     // IObjectKeeper Properties
-    public Dictionary<string, PickableObject> _inventory = new();
+    private readonly Dictionary<string, PickableObject> _inventory = new();
     public Dictionary<string, PickableObject> Inventory { get => _inventory; }
 
     override protected void Start()
@@ -55,7 +57,7 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject != null) return;
 
         _pickedObject = pickableObject;
-        _pickedObject.OnRelease += ReleaseObject;
+        _pickedObject.OnRelease += TryReleaseObject;
 
         pickableObject.Pick(NetworkObject);
         // Debug.Log("Object Picked");
@@ -69,9 +71,11 @@ public class Player : Creature, IHolder, IObjectKeeper
         _pickedObject = null;
     }
 
-    public void ReleaseObject(IHolder holder)
+    public void TryReleaseObject(IHolder holder)
     {
-        _pickedObject.OnRelease -= ReleaseObject;
+        if (holder == null || _pickedObject == null) return;
+        Debug.Log("User " + OwnerClientId + " release object");
+        _pickedObject.OnRelease -= TryReleaseObject;
         _pickedObject = null;
     }
 
@@ -79,22 +83,25 @@ public class Player : Creature, IHolder, IObjectKeeper
 
     #region IObjectKeeper
 
-    public void StorePickedObject(string key)
+    public bool TryStorePickedObject(string key)
     {
-        if (_pickedObject == null) return;
-
+        if (_pickedObject == null) return false;
+        if (_inventory.ContainsKey(key)) return false;
         _inventory.Add(key, _pickedObject);
+
+        // TryReleaseObject(this);
         _pickedObject.Store();
-        ReleaseObject(this);
+        return true;
     }
 
-    public void ExtractObject(string key)
+    public bool TryExtractObject(string key)
     {
-        if (_pickedObject != null) return;
-        if (!_inventory.Remove(key, out PickableObject extractableObject)) return;
+        if (_pickedObject != null) return false;
+        if (!_inventory.Remove(key, out PickableObject extractableObject)) return false;
 
         extractableObject.Extract();
         PickObject(extractableObject);
+        return true;
     }
 
     #endregion

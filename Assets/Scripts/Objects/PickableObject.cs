@@ -51,25 +51,12 @@ public class PickableObject : NetworkBehaviour
 
     public virtual void Store()
     {
-        // Note: move to client RPC
-        transform.GetComponent<Renderer>().enabled = false;
-        transform.GetComponent<Collider>().enabled = false;
-        OnRelease?.Invoke(Holder);
-        // OnDrop?.Invoke();
-
-        Holder = null;
-        // FollowPosition = null;
-
-        // rb.isKinematic = false;
+        StoreItemServerRpc();
     }
 
     public virtual void Extract()
     {
-        // Note: move to client RPC
-        transform.GetComponent<Renderer>().enabled = true;
-        transform.GetComponent<Collider>().enabled = true;
-        FollowPosition = null;
-        // DropItemServerRpc();
+        ExtractItemServerRpc();
     }
 
     #region  RPCs
@@ -94,6 +81,7 @@ public class PickableObject : NetworkBehaviour
         rb.isKinematic = true;
         OnHold?.Invoke(Holder);
         // OnPick?.Invoke();
+        Debug.Log("PickableObject -> PickItemClientRpc");
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -112,6 +100,36 @@ public class PickableObject : NetworkBehaviour
         FollowPosition = null;
 
         rb.isKinematic = false;
+        Debug.Log("PickableObject -> DropItemClientRpc");
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void StoreItemServerRpc()
+    {
+        StoreItemClientRpc();
+    }
+
+    [ClientRpc]
+    protected void StoreItemClientRpc()
+    {
+        transform.GetComponent<Renderer>().enabled = false;
+        transform.GetComponent<Collider>().enabled = false;
+        // OnRelease?.Invoke(Holder);
+        // Holder = null;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void ExtractItemServerRpc()
+    {
+        ExtractItemClientRpc();
+    }
+
+    [ClientRpc]
+    protected void ExtractItemClientRpc()
+    {
+        transform.GetComponent<Renderer>().enabled = true;
+        transform.GetComponent<Collider>().enabled = true;
+        // FollowPosition = null;
     }
 
     #endregion

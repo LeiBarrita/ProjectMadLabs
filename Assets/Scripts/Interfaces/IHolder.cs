@@ -8,6 +8,6 @@ public interface IHolder
     Transform HolderTransform { get; }
     PickableObject PickedObject { get; }
     public void PickObject(PickableObject pickableObject);
-    public void ReleaseObject(IHolder holder);
+    public void TryReleaseObject(IHolder holder);
     public void DropObject();
 }

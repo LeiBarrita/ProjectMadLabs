@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,7 +9,9 @@ public class PickController : NetworkBehaviour
     [SerializeField] private KeyCode PickKey;
     [SerializeField] private KeyCode StoreKey;
     [SerializeField] private KeyCode ActivateKey;
+    [SerializeField] private KeyCode[] InventoryKeys;
 
+    private string selectedInventorySpace = "0";
     private IObjectKeeper playerKeeper;
     private IHolder playerHolder;
     private Camera mainCamera;
@@ -24,10 +27,11 @@ public class PickController : NetworkBehaviour
     {
         if (!IsOwner || mainCamera == null) return;
 
-        Debug.Log(!!playerHolder.PickedObject);
+        // Debug.Log(!!playerHolder.PickedObject);
         HandlePickInput();
         HandleActivateInput();
         HandleStoreInput();
+        HandleInventorySpaceInput();
     }
 
     private void HandlePickInput()
@@ -36,7 +40,7 @@ public class PickController : NetworkBehaviour
         {
             if (playerHolder.PickedObject != null)
             {
-                Debug.Log("Object Dropped");
+                // Debug.Log("Object Dropped");
                 playerHolder.DropObject();
             }
             else
@@ -58,17 +62,27 @@ public class PickController : NetworkBehaviour
         }
     }
 
+    private void HandleInventorySpaceInput()
+    {
+        for (int i = 0; i < InventoryKeys.Length; i++)
+        {
+            if (!Input.GetKeyDown(InventoryKeys[i])) continue;
+            selectedInventorySpace = i.ToString();
+            break;
+        }
+    }
+
     private void HandleStoreInput()
     {
         if (Input.GetKeyDown(StoreKey))
         {
             if (playerHolder.PickedObject != null)
             {
-                playerKeeper.StorePickedObject("1");
+                playerKeeper.TryStorePickedObject(selectedInventorySpace);
             }
             else
             {
-                playerKeeper.ExtractObject("1");
+                playerKeeper.TryExtractObject(selectedInventorySpace);
             }
         }
     }

@@ -25,7 +25,7 @@ public abstract class Creature : NetworkBehaviour
 
     protected virtual void Start()
     {
-        LifePoints = MaxLifePoints;
+        if (IsOwner) LifePoints = MaxLifePoints;
     }
 
     public virtual void Damage(int damage)

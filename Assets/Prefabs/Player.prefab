@@ -398,6 +398,7 @@ MonoBehaviour:
   PickKey: 101
   StoreKey: 114
   ActivateKey: 323
+  InventoryKeys: 31000000320000003300000034000000
 --- !u!1001 &7236831818151892687
 PrefabInstance:
   m_ObjectHideFlags: 0
