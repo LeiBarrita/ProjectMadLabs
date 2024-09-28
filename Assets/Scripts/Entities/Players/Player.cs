@@ -58,7 +58,7 @@ public class Player : Creature, IHolder, IObjectKeeper
         _pickedObject.OnRelease += ReleaseObject;
 
         pickableObject.Pick(NetworkObject);
-        Debug.Log("Object Picked");
+        // Debug.Log("Object Picked");
     }
 
     public void DropObject()
@@ -71,6 +71,7 @@ public class Player : Creature, IHolder, IObjectKeeper
 
     public void ReleaseObject(IHolder holder)
     {
+        _pickedObject.OnRelease -= ReleaseObject;
         _pickedObject = null;
     }
 
@@ -87,13 +88,13 @@ public class Player : Creature, IHolder, IObjectKeeper
         ReleaseObject(this);
     }
 
-    public void UnloadObject(string key)
+    public void ExtractObject(string key)
     {
         if (_pickedObject != null) return;
-        if (!_inventory.Remove(key, out PickableObject unloadObject)) return;
+        if (!_inventory.Remove(key, out PickableObject extractableObject)) return;
 
-        unloadObject.Dump();
-        PickObject(unloadObject);
+        extractableObject.Extract();
+        PickObject(extractableObject);
     }
 
     #endregion

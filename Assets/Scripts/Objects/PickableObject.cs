@@ -14,7 +14,7 @@ public class PickableObject : NetworkBehaviour
     public IHolder Holder;
     // public bool CanShrink;
 
-    private Transform HoldPosition;
+    private Transform FollowPosition;
     private Rigidbody rb;
 
     protected virtual void Awake()
@@ -27,8 +27,8 @@ public class PickableObject : NetworkBehaviour
 
     protected virtual void LateUpdate()
     {
-        if (HoldPosition == null) return;
-        FollowHoldPosition(HoldPosition);
+        if (FollowPosition == null) return;
+        FollowHoldPosition(FollowPosition);
     }
 
     protected virtual void FollowHoldPosition(Transform followPos)
@@ -58,16 +58,17 @@ public class PickableObject : NetworkBehaviour
         // OnDrop?.Invoke();
 
         Holder = null;
-        HoldPosition = null;
+        // FollowPosition = null;
 
         // rb.isKinematic = false;
     }
 
-    public virtual void Dump()
+    public virtual void Extract()
     {
         // Note: move to client RPC
         transform.GetComponent<Renderer>().enabled = true;
         transform.GetComponent<Collider>().enabled = true;
+        FollowPosition = null;
         // DropItemServerRpc();
     }
 
@@ -82,17 +83,17 @@ public class PickableObject : NetworkBehaviour
     [ClientRpc]
     protected void PickItemClientRpc(NetworkObjectReference holdPositionRef)
     {
+        if (!holdPositionRef.TryGet(out NetworkObject networkObject)) return;
+
+        // Old Holder
         if (Holder != null) OnRelease?.Invoke(Holder);
 
-        if (holdPositionRef.TryGet(out NetworkObject networkObject))
-        {
-            Holder = networkObject.GetComponent<IHolder>();
-            HoldPosition = Holder.HoldTransform;
-            rb.isKinematic = true;
-        }
-
-        // OnPick?.Invoke();
+        // New Holder
+        Holder = networkObject.GetComponent<IHolder>();
+        FollowPosition = Holder.HoldTransform;
+        rb.isKinematic = true;
         OnHold?.Invoke(Holder);
+        // OnPick?.Invoke();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -108,7 +109,7 @@ public class PickableObject : NetworkBehaviour
         OnDrop?.Invoke();
 
         Holder = null;
-        HoldPosition = null;
+        FollowPosition = null;
 
         rb.isKinematic = false;
     }

@@ -68,7 +68,7 @@ public class PickController : NetworkBehaviour
             }
             else
             {
-                playerKeeper.UnloadObject("1");
+                playerKeeper.ExtractObject("1");
             }
         }
     }

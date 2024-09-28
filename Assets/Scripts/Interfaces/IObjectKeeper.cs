@@ -6,5 +6,5 @@ public interface IObjectKeeper
 {
     Dictionary<string, PickableObject> Inventory { get; }
     public void StorePickedObject(string key);
-    public void UnloadObject(string key);
+    public void ExtractObject(string key);
 }
