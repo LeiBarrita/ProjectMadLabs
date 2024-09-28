@@ -114,8 +114,8 @@ public class PickableObject : NetworkBehaviour
     {
         transform.GetComponent<Renderer>().enabled = false;
         transform.GetComponent<Collider>().enabled = false;
-        // OnRelease?.Invoke(Holder);
-        // Holder = null;
+        OnRelease?.Invoke(Holder);
+        Holder = null;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -129,7 +129,7 @@ public class PickableObject : NetworkBehaviour
     {
         transform.GetComponent<Renderer>().enabled = true;
         transform.GetComponent<Collider>().enabled = true;
-        // FollowPosition = null;
+        FollowPosition = null;
     }
 
     #endregion
