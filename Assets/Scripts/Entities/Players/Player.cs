@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Player : Creature, IHolder, IObjectKeeper
@@ -19,6 +20,7 @@ public class Player : Creature, IHolder, IObjectKeeper
     public Transform HolderTransform { get => _holderTranform; }
     private PickableObject _pickedObject;
     public PickableObject PickedObject { get => _pickedObject; }
+    public NetworkObjectReference HolderRef { get => NetworkObject; }
 
     // IObjectKeeper Properties
     private readonly Dictionary<string, PickableObject> _inventory = new();
@@ -57,7 +59,7 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject != null) return;
 
         _pickedObject = pickableObject;
-        _pickedObject.OnRelease += TryReleaseObject;
+        // _pickedObject.OnRelease += TryReleaseObject;
 
         pickableObject.Pick(NetworkObject);
         // Debug.Log("Object Picked");
@@ -71,13 +73,13 @@ public class Player : Creature, IHolder, IObjectKeeper
         _pickedObject = null;
     }
 
-    public void TryReleaseObject(IHolder holder)
-    {
-        if (holder == null || _pickedObject == null) return;
-        Debug.Log("User " + OwnerClientId + " release object");
-        _pickedObject.OnRelease -= TryReleaseObject;
-        _pickedObject = null;
-    }
+    // public void TryReleaseObject(IHolder holder)
+    // {
+    //     if (holder == null || _pickedObject == null) return;
+    //     Debug.Log("User " + OwnerClientId + " release object");
+    //     // _pickedObject.OnRelease -= TryReleaseObject;
+    //     _pickedObject = null;
+    // }
 
     #endregion
 
@@ -85,22 +87,22 @@ public class Player : Creature, IHolder, IObjectKeeper
 
     public bool TryStorePickedObject(string key)
     {
-        if (_pickedObject == null) return false;
-        if (_inventory.ContainsKey(key)) return false;
-        _inventory.Add(key, _pickedObject);
+        // if (_pickedObject == null) return false;
+        // if (_inventory.ContainsKey(key)) return false;
+        // _inventory.Add(key, _pickedObject);
 
-        // TryReleaseObject(this);
-        _pickedObject.Store();
+        // // TryReleaseObject(this);
+        // _pickedObject.Store();
         return true;
     }
 
     public bool TryExtractObject(string key)
     {
-        if (_pickedObject != null) return false;
-        if (!_inventory.Remove(key, out PickableObject extractableObject)) return false;
+        // if (_pickedObject != null) return false;
+        // if (!_inventory.Remove(key, out PickableObject extractableObject)) return false;
 
-        extractableObject.Extract();
-        PickObject(extractableObject);
+        // extractableObject.Extract();
+        // PickObject(extractableObject);
         return true;
     }
 

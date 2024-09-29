@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public interface IHolder
@@ -7,7 +8,8 @@ public interface IHolder
     Transform HoldTransform { get; }
     Transform HolderTransform { get; }
     PickableObject PickedObject { get; }
+    NetworkObjectReference HolderRef { get; }
     public void PickObject(PickableObject pickableObject);
-    public void TryReleaseObject(IHolder holder);
+    // public void TryReleaseObject(IHolder holder);
     public void DropObject();
 }

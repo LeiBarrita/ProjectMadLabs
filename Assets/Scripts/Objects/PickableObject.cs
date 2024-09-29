@@ -8,8 +8,8 @@ public class PickableObject : NetworkBehaviour
 {
     // public event Action OnPick; // Action trigger when pick with no previous holder
     public event Action<IHolder> OnHold; // Action trigger always when pick
-    public event Action OnDrop; // Action trigger when drop on the floor
-    public event Action<IHolder> OnRelease; // Action trigger when previous holder stops holding
+    public event Action<IHolder> OnDrop; // Action trigger when drop on the floor
+    // public event Action<IHolder> OnRelease; // Action trigger when previous holder stops holding
 
     public IHolder Holder;
     // public bool CanShrink;
@@ -17,8 +17,11 @@ public class PickableObject : NetworkBehaviour
     private Transform FollowPosition;
     private Rigidbody rb;
 
+    // Temporal
     protected virtual void Awake()
     {
+        // OnDrop += RemoveCurrentHolder;
+
         rb = transform.GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         rb.freezeRotation = true;
@@ -39,9 +42,9 @@ public class PickableObject : NetworkBehaviour
         );
     }
 
-    public virtual void Pick(NetworkObjectReference playerRef)
+    public virtual void Pick(NetworkObjectReference holderRef)
     {
-        PickItemServerRpc(playerRef);
+        PickItemServerRpc(holderRef);
     }
 
     public virtual void Drop()
@@ -49,39 +52,61 @@ public class PickableObject : NetworkBehaviour
         DropItemServerRpc();
     }
 
-    public virtual void Store()
+    protected virtual void RemoveCurrentHolder(IHolder holder)
     {
-        StoreItemServerRpc();
+        Debug.Log("PickableObject -> RemoveCurrentHolder -> Start: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+
+        Holder = null;
+        FollowPosition = null;
+        rb.isKinematic = false;
+
+        Debug.Log("PickableObject -> RemoveCurrentHolder -> End: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
     }
 
-    public virtual void Extract()
+    protected virtual void SetNewHolder(IHolder holder)
     {
-        ExtractItemServerRpc();
+        Debug.Log("PickableObject -> SetNewHolder -> Start: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+
+        Holder = holder;
+        FollowPosition = holder.HoldTransform;
+        rb.isKinematic = true;
+
+        Debug.Log("PickableObject -> SetNewHolder -> End: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
     }
+
+    // public virtual void Store()
+    // {
+    //     StoreItemServerRpc();
+    // }
+
+    // public virtual void Extract()
+    // {
+    //     ExtractItemServerRpc();
+    // }
 
     #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]
-    protected void PickItemServerRpc(NetworkObjectReference holdPositionRef)
+    protected void PickItemServerRpc(NetworkObjectReference holderRef)
     {
-        PickItemClientRpc(holdPositionRef);
+        PickItemClientRpc(holderRef);
     }
 
     [ClientRpc]
-    protected void PickItemClientRpc(NetworkObjectReference holdPositionRef)
+    protected void PickItemClientRpc(NetworkObjectReference holderRef)
     {
-        if (!holdPositionRef.TryGet(out NetworkObject networkObject)) return;
+        Debug.Log("PickableObject -> PickItemClientRpc -> Start: { Holder: " + (Holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+
+        if (!holderRef.TryGet(out NetworkObject networkObject)) return;
+        if (!networkObject.transform.TryGetComponent(out IHolder newHolder)) return;
 
         // Old Holder
-        if (Holder != null) OnRelease?.Invoke(Holder);
+        if (Holder != null) OnDrop?.Invoke(Holder);
 
-        // New Holder
-        Holder = networkObject.GetComponent<IHolder>();
-        FollowPosition = Holder.HoldTransform;
-        rb.isKinematic = true;
-        OnHold?.Invoke(Holder);
-        // OnPick?.Invoke();
-        Debug.Log("PickableObject -> PickItemClientRpc");
+        SetNewHolder(newHolder);
+        OnHold?.Invoke(newHolder);
+
+        Debug.Log("PickableObject -> PickItemClientRpc -> End: { Holder: " + (Holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -93,44 +118,39 @@ public class PickableObject : NetworkBehaviour
     [ClientRpc]
     protected void DropItemClientRpc()
     {
-        OnRelease?.Invoke(Holder);
-        OnDrop?.Invoke();
-
-        Holder = null;
-        FollowPosition = null;
-
-        rb.isKinematic = false;
-        Debug.Log("PickableObject -> DropItemClientRpc");
+        // if (Holder == null) return;
+        OnDrop?.Invoke(Holder);
+        RemoveCurrentHolder(Holder);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    protected void StoreItemServerRpc()
-    {
-        StoreItemClientRpc();
-    }
+    // [ServerRpc(RequireOwnership = false)]
+    // protected void StoreItemServerRpc()
+    // {
+    //     StoreItemClientRpc();
+    // }
 
-    [ClientRpc]
-    protected void StoreItemClientRpc()
-    {
-        transform.GetComponent<Renderer>().enabled = false;
-        transform.GetComponent<Collider>().enabled = false;
-        OnRelease?.Invoke(Holder);
-        Holder = null;
-    }
+    // [ClientRpc]
+    // protected void StoreItemClientRpc()
+    // {
+    //     transform.GetComponent<Renderer>().enabled = false;
+    //     transform.GetComponent<Collider>().enabled = false;
+    //     OnRelease?.Invoke(Holder);
+    //     Holder = null;
+    // }
 
-    [ServerRpc(RequireOwnership = false)]
-    protected void ExtractItemServerRpc()
-    {
-        ExtractItemClientRpc();
-    }
+    // [ServerRpc(RequireOwnership = false)]
+    // protected void ExtractItemServerRpc()
+    // {
+    //     ExtractItemClientRpc();
+    // }
 
-    [ClientRpc]
-    protected void ExtractItemClientRpc()
-    {
-        transform.GetComponent<Renderer>().enabled = true;
-        transform.GetComponent<Collider>().enabled = true;
-        FollowPosition = null;
-    }
+    // [ClientRpc]
+    // protected void ExtractItemClientRpc()
+    // {
+    //     transform.GetComponent<Renderer>().enabled = true;
+    //     transform.GetComponent<Collider>().enabled = true;
+    //     FollowPosition = null;
+    // }
 
     #endregion
 }

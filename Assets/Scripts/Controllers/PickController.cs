@@ -56,9 +56,9 @@ public class PickController : NetworkBehaviour
         {
             // Debug.Log("Picked Object is Activable");
             if (Input.GetKeyDown(ActivateKey))
-                activableObject.ActivateKeyDown();
+                activableObject.ActivateKeyDown(playerHolder.HolderRef);
             if (Input.GetKeyUp(ActivateKey))
-                activableObject.ActivateKeyUp();
+                activableObject.ActivateKeyUp(playerHolder.HolderRef);
         }
     }
 

@@ -8,7 +8,7 @@ public class GravityShifter : PickableObject
     private void Start()
     {
         OnHold += RemoveGravity;
-        OnRelease += ReturnGravity;
+        OnDrop += ReturnGravity;
     }
 
     public void RemoveGravity(IHolder holder)

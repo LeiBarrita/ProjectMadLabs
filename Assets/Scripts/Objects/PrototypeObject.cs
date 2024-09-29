@@ -7,7 +7,7 @@ using UnityEngine;
 
 public abstract class PrototypeObject : ActivableObject
 {
-    private NetworkVariable<int> failureProbability = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    // private NetworkVariable<int> failureProbability = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private bool IsBroken = false;
 
     [SerializeField]
@@ -28,32 +28,32 @@ public abstract class PrototypeObject : ActivableObject
         // OnFailure += Shrink;
     }
 
-    public override void ActivateKeyDown()
+    public override void ActivateKeyDown(NetworkObjectReference holderRef)
     {
         if (IsBroken) return;
-        base.ActivateKeyDown();
+        base.ActivateKeyDown(holderRef);
     }
 
-    public override void ActivateKeyUp()
+    public override void ActivateKeyUp(NetworkObjectReference holderRef)
     {
         if (IsBroken) return;
-        base.ActivateKeyUp();
+        base.ActivateKeyUp(holderRef);
     }
 
     protected void AdvanceFailure(IHolder holder)
     {
-        Debug.Log("Failure Prob: " + failureProbability.Value);
-        if (failureSafePoint < failureProbability.Value)
-        {
-            int failValue = UnityEngine.Random.Range(0, 120);
+        // Debug.Log("Failure Prob: " + failureProbability.Value);
+        // if (failureSafePoint < failureProbability.Value)
+        // {
+        //     int failValue = UnityEngine.Random.Range(0, 120);
 
-            Debug.Log("Failure Value: " + failValue);
-            if (failValue < failureProbability.Value)
-                Fail();
-        }
+        //     Debug.Log("Failure Value: " + failValue);
+        //     if (failValue < failureProbability.Value)
+        //         Fail();
+        // }
 
-        failureProbability.Value += failureIncrement;
-        failureProbability.Value = Math.Clamp(failureProbability.Value, 0, 100);
+        // failureProbability.Value += failureIncrement;
+        // failureProbability.Value = Math.Clamp(failureProbability.Value, 0, 100);
     }
 
     protected void Fail()

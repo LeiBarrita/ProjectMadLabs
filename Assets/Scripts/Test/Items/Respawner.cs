@@ -11,7 +11,7 @@ public class Respawner : ActivableObject
         base.Start();
 
         OnHold += Yeet10;
-        OnRelease += Yeet100;
+        OnDrop += Yeet100;
 
         OnActivationDown += Ascend;
         OnActivationUp += ResetPosition;

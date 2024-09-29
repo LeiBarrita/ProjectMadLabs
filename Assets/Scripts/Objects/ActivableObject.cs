@@ -14,52 +14,83 @@ public abstract class ActivableObject : PickableObject
 
     protected virtual void Start()
     {
-        OnRelease += ResetActivation;
+        OnDrop += ResetActivation;
         // Debug.Log("ActivableObject Created");
     }
 
-    public virtual void ActivateKeyDown()
+    public virtual void ActivateKeyDown(NetworkObjectReference holderRef)
     {
-        ActivateKeyDownServerRpc();
+        ActivateKeyDownServerRpc(holderRef);
     }
 
-    public virtual void ActivateKeyUp()
+    public virtual void ActivateKeyUp(NetworkObjectReference holderRef)
     {
-        ActivateKeyUpServerRpc();
+        ActivateKeyUpServerRpc(holderRef);
+    }
+
+    private void ActivateOn(IHolder holder)
+    {
+        if (Active) return;
+
+        Active = true;
+        OnActivationDown?.Invoke(holder);
+    }
+
+    private void ActivateOff(IHolder holder)
+    {
+        if (!Active) return;
+
+        OnActivationUp?.Invoke(holder);
+        Active = false;
     }
 
     private void ResetActivation(IHolder holder)
     {
-        if (!Active) return;
-        ActivateKeyUp();
+        Debug.Log("ActivableObject -> ResetActivation -> Start: { Active: " + Active + ", holder: " + (holder != null) + " }");
+
+        if (!ErrorHandler.ValueExists(holder, "ActivableObject", "ResetActivation", "holder")) return;
+
+        ActivateOff(holder);
+
+        Debug.Log("ActivableObject -> ResetActivation -> End: { Active: " + Active + ", holder: " + (holder != null) + " }");
     }
 
     #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]
-    protected void ActivateKeyDownServerRpc()
+    protected void ActivateKeyDownServerRpc(NetworkObjectReference holderRef)
     {
-        ActivateKeyDownClientRpc();
+        ActivateKeyDownClientRpc(holderRef);
     }
 
     [ClientRpc]
-    protected void ActivateKeyDownClientRpc()
+    protected void ActivateKeyDownClientRpc(NetworkObjectReference holderRef)
     {
-        Active = true;
-        OnActivationDown?.Invoke(Holder);
+        if (!holderRef.TryGet(out NetworkObject networkObject)) return;
+        IHolder holder = networkObject.transform.GetComponent<IHolder>();
+        if (!ErrorHandler.ValueExists(holder, "ActivableObject", "ActivateKeyDownClientRpc", "holder")) return;
+
+        ActivateOn(holder);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void ActivateKeyUpServerRpc()
+    protected void ActivateKeyUpServerRpc(NetworkObjectReference holderRef)
     {
-        ActivateKeyUpClientRpc();
+        ActivateKeyUpClientRpc(holderRef);
     }
 
     [ClientRpc]
-    protected void ActivateKeyUpClientRpc()
+    protected void ActivateKeyUpClientRpc(NetworkObjectReference holderRef)
     {
-        OnActivationUp?.Invoke(Holder);
-        Active = false;
+        if (!holderRef.TryGet(out NetworkObject networkObject)) return;
+        IHolder holder = networkObject.transform.GetComponent<IHolder>();
+        if (!ErrorHandler.ValueExists(holder, "ActivableObject", "ActivateKeyUpClientRpc", "holder")) return;
+
+        // Debug.Log("ActivableObject -> ActivateKeyUpClientRpc -> Start: { Active: " + Active + ", Holder: " + (Holder != null) + ", holder: " + (holder != null) + " }");
+
+        ActivateOff(holder);
+
+        // Debug.Log("ActivableObject -> ActivateKeyUpClientRpc -> End: { Active: " + Active + ", Holder: " + (Holder != null) + ", holder: " + (holder != null) + " }");
     }
 
     #endregion
