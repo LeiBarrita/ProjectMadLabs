@@ -54,14 +54,12 @@ public class Player : Creature, IHolder, IObjectKeeper
 
     public void PickAction(PickableObject pickableObject)
     {
-        // PickObject(pickableObject);
         pickableObject.Pick(NetworkObject);
     }
 
     public void DropAction()
     {
         _pickedObject.Drop(NetworkObject);
-        // DropObject();
     }
 
     #region IHolder
@@ -71,30 +69,14 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject != null) return;
 
         _pickedObject = pickableObject;
-        // _pickedObject.OnDrop += RemovePickedObject;
-
-        // pickableObject.Pick(NetworkObject);
     }
 
     public void DropObject()
     {
-        if (_pickedObject == null) return;
+        if (!ErrorHandler.ValueExists(_pickedObject, "Player", "DropObject", "_pickedObject")) return;
 
-        // _pickedObject.Drop(NetworkObject);
         _pickedObject = null;
     }
-
-    // public void RemovePickedObject(IHolder holder)
-    // {
-    //     if (!ErrorHandler.ValueExists(holder, "Player", "RemovePickedObject", "holder")) return;
-    //     if (!ErrorHandler.ValueExists(_pickedObject, "Player", "RemovePickedObject", "_pickedObject")) return;
-
-    //     Debug.Log("Player -> RemovePickedObject -> Start: { _pickedObject: " + (_pickedObject != null) + " }");
-    //     Debug.Log("User " + OwnerClientId + " release object");
-    //     _pickedObject.OnDrop -= RemovePickedObject;
-    //     _pickedObject = null;
-    //     Debug.Log("Player -> RemovePickedObject -> End: { _pickedObject: " + (_pickedObject != null) + " }");
-    // }
 
     #endregion
 

@@ -6,10 +6,8 @@ using UnityEngine;
 
 public class PickableObject : NetworkBehaviour
 {
-    // public event Action OnPick; // Action trigger when pick with no previous holder
-    public event Action<IHolder> OnHold; // Action trigger always when pick
-    public event Action<IHolder> OnDrop; // Action trigger when drop on the floor
-    // public event Action<IHolder> OnRelease; // Action trigger when previous holder stops holding
+    public event Action<IHolder> OnHold; // Action trigger when something takes this object
+    public event Action<IHolder> OnDrop; // Action trigger when the Holder loses this object
 
     public IHolder Holder;
     // public bool CanShrink;
@@ -20,8 +18,6 @@ public class PickableObject : NetworkBehaviour
     // Temporal
     protected virtual void Awake()
     {
-        // OnDrop += RemoveCurrentHolder;
-
         rb = transform.GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         rb.freezeRotation = true;
@@ -56,7 +52,6 @@ public class PickableObject : NetworkBehaviour
     {
         Debug.Log("PickableObject -> RemoveCurrentHolder -> Start: { Holder: " + (Holder != null) + ", currentHolder: " + (currentHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
 
-        // currentHolder.DropObject();
         Holder = null;
         FollowPosition = null;
 
@@ -146,7 +141,6 @@ public class PickableObject : NetworkBehaviour
             + (FollowPosition != null) + " }"
         );
 
-        // if (Holder == null) return;
         OnDrop?.Invoke(currentHolder);
         RemoveCurrentHolder(currentHolder);
 

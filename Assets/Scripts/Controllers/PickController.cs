@@ -27,7 +27,6 @@ public class PickController : NetworkBehaviour
     {
         if (!IsOwner || mainCamera == null) return;
 
-        // Debug.Log(!!playerHolder.PickedObject);
         HandlePickInput();
         HandleActivateInput();
         HandleStoreInput();
@@ -40,7 +39,6 @@ public class PickController : NetworkBehaviour
         {
             if (player.PickedObject != null)
             {
-                // Debug.Log("Object Dropped");
                 player.DropAction();
             }
             else
@@ -54,7 +52,6 @@ public class PickController : NetworkBehaviour
     {
         if (player.PickedObject is ActivableObject activableObject)
         {
-            // Debug.Log("Picked Object is Activable");
             if (Input.GetKeyDown(ActivateKey))
                 activableObject.ActivateKeyDown(player.HolderRef);
             if (Input.GetKeyUp(ActivateKey))

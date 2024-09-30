@@ -15,7 +15,6 @@ public abstract class ActivableObject : PickableObject
     protected virtual void Start()
     {
         OnDrop += ResetActivation;
-        // Debug.Log("ActivableObject Created");
     }
 
     public virtual void ActivateKeyDown(NetworkObjectReference holderRef)
@@ -46,13 +45,13 @@ public abstract class ActivableObject : PickableObject
 
     private void ResetActivation(IHolder holder)
     {
-        Debug.Log("ActivableObject -> ResetActivation -> Start: { Active: " + Active + ", holder: " + (holder != null) + " }");
+        // Debug.Log("ActivableObject -> ResetActivation -> Start: { Active: " + Active + ", holder: " + (holder != null) + " }");
 
         if (!ErrorHandler.ValueExists(holder, "ActivableObject", "ResetActivation", "holder")) return;
 
         ActivateOff(holder);
 
-        Debug.Log("ActivableObject -> ResetActivation -> End: { Active: " + Active + ", holder: " + (holder != null) + " }");
+        // Debug.Log("ActivableObject -> ResetActivation -> End: { Active: " + Active + ", holder: " + (holder != null) + " }");
     }
 
     #region  RPCs

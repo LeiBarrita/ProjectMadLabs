@@ -10,6 +10,5 @@ public interface IHolder
     PickableObject PickedObject { get; }
     NetworkObjectReference HolderRef { get; }
     public void PickObject(PickableObject pickableObject);
-    // public void TryReleaseObject(IHolder holder);
     public void DropObject();
 }
