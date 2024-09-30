@@ -13,13 +13,13 @@ public class PickController : NetworkBehaviour
 
     private string selectedInventorySpace = "0";
     private IObjectKeeper playerKeeper;
-    private IHolder playerHolder;
+    private Player player;
     private Camera mainCamera;
 
     private void Awake()
     {
         playerKeeper = transform.GetComponent<IObjectKeeper>();
-        playerHolder = transform.GetComponent<IHolder>();
+        player = transform.GetComponent<Player>();
         mainCamera = Camera.main;
     }
 
@@ -38,10 +38,10 @@ public class PickController : NetworkBehaviour
     {
         if (Input.GetKeyDown(PickKey))
         {
-            if (playerHolder.PickedObject != null)
+            if (player.PickedObject != null)
             {
                 // Debug.Log("Object Dropped");
-                playerHolder.DropObject();
+                player.DropAction();
             }
             else
             {
@@ -52,13 +52,13 @@ public class PickController : NetworkBehaviour
 
     private void HandleActivateInput()
     {
-        if (playerHolder.PickedObject is ActivableObject activableObject)
+        if (player.PickedObject is ActivableObject activableObject)
         {
             // Debug.Log("Picked Object is Activable");
             if (Input.GetKeyDown(ActivateKey))
-                activableObject.ActivateKeyDown(playerHolder.HolderRef);
+                activableObject.ActivateKeyDown(player.HolderRef);
             if (Input.GetKeyUp(ActivateKey))
-                activableObject.ActivateKeyUp(playerHolder.HolderRef);
+                activableObject.ActivateKeyUp(player.HolderRef);
         }
     }
 
@@ -76,7 +76,7 @@ public class PickController : NetworkBehaviour
     {
         if (Input.GetKeyDown(StoreKey))
         {
-            if (playerHolder.PickedObject != null)
+            if (player.PickedObject != null)
             {
                 playerKeeper.TryStorePickedObject(selectedInventorySpace);
             }
@@ -94,7 +94,7 @@ public class PickController : NetworkBehaviour
         {
             if (hitObject.transform.TryGetComponent(out PickableObject pickObject))
             {
-                playerHolder.PickObject(pickObject);
+                player.PickAction(pickObject);
             }
         }
     }

@@ -47,31 +47,37 @@ public class PickableObject : NetworkBehaviour
         PickItemServerRpc(holderRef);
     }
 
-    public virtual void Drop()
+    public virtual void Drop(NetworkObjectReference holderRef)
     {
-        DropItemServerRpc();
+        DropItemServerRpc(holderRef);
     }
 
-    protected virtual void RemoveCurrentHolder(IHolder holder)
+    protected virtual void RemoveCurrentHolder(IHolder currentHolder)
     {
-        Debug.Log("PickableObject -> RemoveCurrentHolder -> Start: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+        Debug.Log("PickableObject -> RemoveCurrentHolder -> Start: { Holder: " + (Holder != null) + ", currentHolder: " + (currentHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
 
+        // currentHolder.DropObject();
         Holder = null;
         FollowPosition = null;
+
         rb.isKinematic = false;
 
-        Debug.Log("PickableObject -> RemoveCurrentHolder -> End: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+        currentHolder.DropObject();
+
+        Debug.Log("PickableObject -> RemoveCurrentHolder -> End: { Holder: " + (Holder != null) + ", currentHolder: " + (currentHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
     }
 
-    protected virtual void SetNewHolder(IHolder holder)
+    protected virtual void SetNewHolder(IHolder newHolder)
     {
-        Debug.Log("PickableObject -> SetNewHolder -> Start: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+        Debug.Log("PickableObject -> SetNewHolder -> Start: { Holder: " + (Holder != null) + ", newHolder: " + (newHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
 
-        Holder = holder;
-        FollowPosition = holder.HoldTransform;
+        Holder = newHolder;
+        FollowPosition = newHolder.HoldTransform;
         rb.isKinematic = true;
 
-        Debug.Log("PickableObject -> SetNewHolder -> End: { Holder: " + (Holder != null) + ", holder: " + (holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+        newHolder.PickObject(this);
+
+        Debug.Log("PickableObject -> SetNewHolder -> End: { Holder: " + (Holder != null) + ", newHolder: " + (newHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
     }
 
     // public virtual void Store()
@@ -95,32 +101,60 @@ public class PickableObject : NetworkBehaviour
     [ClientRpc]
     protected void PickItemClientRpc(NetworkObjectReference holderRef)
     {
-        Debug.Log("PickableObject -> PickItemClientRpc -> Start: { Holder: " + (Holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
 
         if (!holderRef.TryGet(out NetworkObject networkObject)) return;
         if (!networkObject.transform.TryGetComponent(out IHolder newHolder)) return;
 
-        // Old Holder
-        if (Holder != null) OnDrop?.Invoke(Holder);
+        Debug.Log(
+            "PickableObject -> PickItemClientRpc -> Start: { Holder: "
+            + (Holder != null) + ", newHolder: "
+            + (newHolder != null) + ", FollowPosition: "
+            + (FollowPosition != null) + " }"
+        );
+
+        if (Holder != null && Holder != newHolder)
+        {
+            OnDrop?.Invoke(Holder);
+            Holder.DropObject();
+        }
 
         SetNewHolder(newHolder);
         OnHold?.Invoke(newHolder);
 
-        Debug.Log("PickableObject -> PickItemClientRpc -> End: { Holder: " + (Holder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
+        Debug.Log("PickableObject -> PickItemClientRpc -> End: { Holder: "
+            + (Holder != null) + ", newHolder: "
+            + (newHolder != null) + ", FollowPosition: "
+            + (FollowPosition != null) + " }"
+        );
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void DropItemServerRpc()
+    protected void DropItemServerRpc(NetworkObjectReference holderRef)
     {
-        DropItemClientRpc();
+        DropItemClientRpc(holderRef);
     }
 
     [ClientRpc]
-    protected void DropItemClientRpc()
+    protected void DropItemClientRpc(NetworkObjectReference holderRef)
     {
+        if (!holderRef.TryGet(out NetworkObject networkObject)) return;
+        if (!networkObject.transform.TryGetComponent(out IHolder currentHolder)) return;
+
+        Debug.Log("PickableObject -> DropItemClientRpc -> Start: { Holder: "
+            + (Holder != null) + ", currentHolder: "
+            + (currentHolder != null) + ", FollowPosition: "
+            + (FollowPosition != null) + " }"
+        );
+
         // if (Holder == null) return;
-        OnDrop?.Invoke(Holder);
-        RemoveCurrentHolder(Holder);
+        OnDrop?.Invoke(currentHolder);
+        RemoveCurrentHolder(currentHolder);
+
+        Debug.Log("PickableObject -> DropItemClientRpc -> End: { Holder: "
+            + (Holder != null) + ", currentHolder: "
+            + (currentHolder != null) + ", FollowPosition: "
+            + (FollowPosition != null) + " }"
+        );
     }
 
     // [ServerRpc(RequireOwnership = false)]

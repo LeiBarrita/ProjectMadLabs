@@ -52,6 +52,18 @@ public class Player : Creature, IHolder, IObjectKeeper
         OnPlayerDestroy?.Invoke();
     }
 
+    public void PickAction(PickableObject pickableObject)
+    {
+        // PickObject(pickableObject);
+        pickableObject.Pick(NetworkObject);
+    }
+
+    public void DropAction()
+    {
+        _pickedObject.Drop(NetworkObject);
+        // DropObject();
+    }
+
     #region IHolder
 
     public void PickObject(PickableObject pickableObject)
@@ -59,26 +71,29 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject != null) return;
 
         _pickedObject = pickableObject;
-        // _pickedObject.OnRelease += TryReleaseObject;
+        // _pickedObject.OnDrop += RemovePickedObject;
 
-        pickableObject.Pick(NetworkObject);
-        // Debug.Log("Object Picked");
+        // pickableObject.Pick(NetworkObject);
     }
 
     public void DropObject()
     {
         if (_pickedObject == null) return;
 
-        _pickedObject.Drop();
+        // _pickedObject.Drop(NetworkObject);
         _pickedObject = null;
     }
 
-    // public void TryReleaseObject(IHolder holder)
+    // public void RemovePickedObject(IHolder holder)
     // {
-    //     if (holder == null || _pickedObject == null) return;
+    //     if (!ErrorHandler.ValueExists(holder, "Player", "RemovePickedObject", "holder")) return;
+    //     if (!ErrorHandler.ValueExists(_pickedObject, "Player", "RemovePickedObject", "_pickedObject")) return;
+
+    //     Debug.Log("Player -> RemovePickedObject -> Start: { _pickedObject: " + (_pickedObject != null) + " }");
     //     Debug.Log("User " + OwnerClientId + " release object");
-    //     // _pickedObject.OnRelease -= TryReleaseObject;
+    //     _pickedObject.OnDrop -= RemovePickedObject;
     //     _pickedObject = null;
+    //     Debug.Log("Player -> RemovePickedObject -> End: { _pickedObject: " + (_pickedObject != null) + " }");
     // }
 
     #endregion
@@ -91,7 +106,7 @@ public class Player : Creature, IHolder, IObjectKeeper
         // if (_inventory.ContainsKey(key)) return false;
         // _inventory.Add(key, _pickedObject);
 
-        // // TryReleaseObject(this);
+        // // RemovePickedObject(this);
         // _pickedObject.Store();
         return true;
     }
