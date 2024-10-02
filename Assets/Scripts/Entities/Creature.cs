@@ -54,8 +54,7 @@ public abstract class Creature : NetworkBehaviour
     {
         // Status = CreatureStatus.Death;
 
-        if (this is IHolder holder)
-            holder.DropObject();
+        if (this is IHolder holder) holder.PickedObject?.Drop(NetworkObject);
 
         OnDeath?.Invoke(this);
 

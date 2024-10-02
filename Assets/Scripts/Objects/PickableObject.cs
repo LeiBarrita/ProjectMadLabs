@@ -53,9 +53,9 @@ public class PickableObject : NetworkBehaviour
         StoreItemServerRpc(keeperRef);
     }
 
-    public virtual void Extract(NetworkObjectReference keeperRef)
+    public virtual void Extract()
     {
-        ExtractItemServerRpc(keeperRef);
+        ExtractItemServerRpc();
     }
 
     protected virtual void RemoveCurrentHolder(IHolder currentHolder)
@@ -166,35 +166,21 @@ public class PickableObject : NetworkBehaviour
         transform.GetComponent<Renderer>().enabled = false;
         transform.GetComponent<Collider>().enabled = false;
 
-        // if (Holder != null)
-        // {
-        //     OnDrop?.Invoke(Holder);
-        //     // Holder.DropObject();
-        //     RemoveCurrentHolder(Holder);
-        // }
-
         if (keeper is IHolder holder) FollowPosition = holder.HolderTransform;
 
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void ExtractItemServerRpc(NetworkObjectReference keeperRef)
+    protected void ExtractItemServerRpc()
     {
-        ExtractItemClientRpc(keeperRef);
+        ExtractItemClientRpc();
     }
 
     [ClientRpc]
-    protected void ExtractItemClientRpc(NetworkObjectReference keeperRef)
+    protected void ExtractItemClientRpc()
     {
-        // if (!keeperRef.TryGet(out NetworkObject networkObject)) return;
-        // if (!networkObject.transform.TryGetComponent(out IHolder holder)) return;
-
         transform.GetComponent<Renderer>().enabled = true;
         transform.GetComponent<Collider>().enabled = true;
-        // FollowPosition = null;
-
-        // SetNewHolder(holder);
-        // OnHold?.Invoke(holder);
     }
 
     #endregion

@@ -11,8 +11,6 @@ public class Player : Creature, IHolder, IObjectKeeper
     public GameEvent onPlayerSpawns;
     public event Action OnPlayerDestroy;
 
-    // private readonly int _inventorySize = 4;
-
     // IHolder Properties
     private Transform _holdTranform;
     public Transform HoldTransform { get => _holdTranform; }
@@ -79,7 +77,7 @@ public class Player : Creature, IHolder, IObjectKeeper
         if (_pickedObject != null) return;
         if (!_inventory.Remove(inventoryKey, out PickableObject extractedObject)) return;
 
-        extractedObject.Extract(NetworkObject);
+        extractedObject.Extract();
         extractedObject.Pick(NetworkObject);
     }
 
@@ -101,30 +99,9 @@ public class Player : Creature, IHolder, IObjectKeeper
 
     #endregion
 
-    #region IObjectKeeper
+    // #region IObjectKeeper
 
-    // public bool TryStorePickedObject(string key)
-    // {
-    //     if (_pickedObject == null) return false;
-    //     if (_inventory.ContainsKey(key)) return false;
-    //     _inventory.Add(key, _pickedObject);
-
-    //     // RemovePickedObject(this);
-    //     _pickedObject.Store();
-    //     return true;
-    // }
-
-    // public bool TryExtractObject(string key)
-    // {
-    //     if (_pickedObject != null) return false;
-    //     if (!_inventory.Remove(key, out PickableObject extractableObject)) return false;
-
-    //     extractableObject.Extract();
-    //     PickObject(extractableObject);
-    //     return true;
-    // }
-
-    #endregion
+    // #endregion
 
     #region  Death Simulation
     private void SimulateDeath(Creature creature)

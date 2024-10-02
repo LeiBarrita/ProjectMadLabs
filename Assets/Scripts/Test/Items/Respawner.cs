@@ -22,7 +22,8 @@ public class Respawner : ActivableObject
 
     private void Yeet10(IHolder holder)
     {
-        holder.HolderTransform.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Impulse);
+        // holder.HolderTransform.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Impulse);
+        holder.HolderTransform.position = new Vector3(0, 5, 0);
     }
 
     private void Yeet100(IHolder holder)
