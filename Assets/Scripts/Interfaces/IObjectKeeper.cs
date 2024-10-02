@@ -5,7 +5,5 @@ using UnityEngine;
 public interface IObjectKeeper
 {
     Dictionary<int, PickableObject> Inventory { get; }
-
-    // bool TryStorePickedObject(string key);
-    // bool TryExtractObject(string key);
+    Vector3 ExtractPosition { get; }
 }

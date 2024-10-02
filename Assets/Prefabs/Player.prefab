@@ -310,6 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxLifePoints: 100
   onPlayerSpawns: {fileID: 11400000, guid: b5a181611cff5044c8461eaf1a7b74c9, type: 2}
+  onPlayerDies: {fileID: 11400000, guid: f07bb97efb369dd46abf0e98b85716ce, type: 2}
 --- !u!54 &-9182048056404189328
 Rigidbody:
   m_ObjectHideFlags: 0

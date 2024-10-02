@@ -9,6 +9,7 @@ public class Player : Creature, IHolder, IObjectKeeper
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
+    public GameEvent onPlayerDies;
     public event Action OnPlayerDestroy;
 
     // IHolder Properties
@@ -23,6 +24,7 @@ public class Player : Creature, IHolder, IObjectKeeper
     // IObjectKeeper Properties
     private readonly Dictionary<int, PickableObject> _inventory = new();
     public Dictionary<int, PickableObject> Inventory { get => _inventory; }
+    public Vector3 ExtractPosition { get => _holdTranform.position; }
 
     override protected void Start()
     {
@@ -106,23 +108,27 @@ public class Player : Creature, IHolder, IObjectKeeper
     #region  Death Simulation
     private void SimulateDeath(Creature creature)
     {
-        DelayedRespawn();
+        onPlayerDies.Raise(null, OwnerClientId);
+        NetworkObject.Despawn();
+        // DelayedRespawn();
     }
 
     private async void DelayedRespawn()
     {
-        PlayerController pc = transform.GetComponent<PlayerController>();
-        PickController pickc = transform.GetComponent<PickController>();
+        // PlayerController pc = transform.GetComponent<PlayerController>();
+        // PickController pickc = transform.GetComponent<PickController>();
 
-        pc.enabled = false;
-        pickc.enabled = false;
+        // pc.enabled = false;
+        // pickc.enabled = false;
 
         await Task.Delay(3000);
 
-        transform.position = Vector3.zero;
-        pickc.enabled = true;
-        pc.enabled = true;
-        LifePoints = MaxLifePoints;
+        // transform.position = Vector3.zero;
+        // pickc.enabled = true;
+        // pc.enabled = true;
+        // LifePoints = MaxLifePoints;
+
+        // transform.GetComponent<NetworkObject>().SpawnAsPlayerObject(NetworkObject.OwnerClientId);
     }
 
     #endregion
