@@ -11,7 +11,7 @@ public class PickController : NetworkBehaviour
     [SerializeField] private KeyCode ActivateKey;
     [SerializeField] private KeyCode[] InventoryKeys;
 
-    private string selectedInventorySpace = "0";
+    private int selectedInventorySpace = 0;
     private IObjectKeeper playerKeeper;
     private Player player;
     private Camera mainCamera;
@@ -64,7 +64,7 @@ public class PickController : NetworkBehaviour
         for (int i = 0; i < InventoryKeys.Length; i++)
         {
             if (!Input.GetKeyDown(InventoryKeys[i])) continue;
-            selectedInventorySpace = i.ToString();
+            selectedInventorySpace = i;
             break;
         }
     }
@@ -75,11 +75,13 @@ public class PickController : NetworkBehaviour
         {
             if (player.PickedObject != null)
             {
-                playerKeeper.TryStorePickedObject(selectedInventorySpace);
+                // playerKeeper.TryStorePickedObject(selectedInventorySpace);
+                player.StoreAction(selectedInventorySpace);
             }
             else
             {
-                playerKeeper.TryExtractObject(selectedInventorySpace);
+                // playerKeeper.TryExtractObject(selectedInventorySpace);
+                player.ExtractAction(selectedInventorySpace);
             }
         }
     }

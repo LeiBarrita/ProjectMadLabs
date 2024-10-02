@@ -4,7 +4,8 @@ using UnityEngine;
 
 public interface IObjectKeeper
 {
-    Dictionary<string, PickableObject> Inventory { get; }
-    bool TryStorePickedObject(string key);
-    bool TryExtractObject(string key);
+    Dictionary<int, PickableObject> Inventory { get; }
+
+    // bool TryStorePickedObject(string key);
+    // bool TryExtractObject(string key);
 }

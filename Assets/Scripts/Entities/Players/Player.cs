@@ -23,8 +23,8 @@ public class Player : Creature, IHolder, IObjectKeeper
     public NetworkObjectReference HolderRef { get => NetworkObject; }
 
     // IObjectKeeper Properties
-    private readonly Dictionary<string, PickableObject> _inventory = new();
-    public Dictionary<string, PickableObject> Inventory { get => _inventory; }
+    private readonly Dictionary<int, PickableObject> _inventory = new();
+    public Dictionary<int, PickableObject> Inventory { get => _inventory; }
 
     override protected void Start()
     {
@@ -62,6 +62,27 @@ public class Player : Creature, IHolder, IObjectKeeper
         _pickedObject.Drop(NetworkObject);
     }
 
+    public void StoreAction(int inventoryKey)
+    {
+        PickableObject storeObject = _pickedObject;
+
+        if (storeObject == null) return;
+        if (_inventory.ContainsKey(inventoryKey)) return;
+
+        _inventory.Add(inventoryKey, storeObject);
+        storeObject.Drop(NetworkObject);
+        storeObject.Store(NetworkObject);
+    }
+
+    public void ExtractAction(int inventoryKey)
+    {
+        if (_pickedObject != null) return;
+        if (!_inventory.Remove(inventoryKey, out PickableObject extractedObject)) return;
+
+        extractedObject.Extract(NetworkObject);
+        extractedObject.Pick(NetworkObject);
+    }
+
     #region IHolder
 
     public void PickObject(PickableObject pickableObject)
@@ -82,26 +103,26 @@ public class Player : Creature, IHolder, IObjectKeeper
 
     #region IObjectKeeper
 
-    public bool TryStorePickedObject(string key)
-    {
-        // if (_pickedObject == null) return false;
-        // if (_inventory.ContainsKey(key)) return false;
-        // _inventory.Add(key, _pickedObject);
+    // public bool TryStorePickedObject(string key)
+    // {
+    //     if (_pickedObject == null) return false;
+    //     if (_inventory.ContainsKey(key)) return false;
+    //     _inventory.Add(key, _pickedObject);
 
-        // // RemovePickedObject(this);
-        // _pickedObject.Store();
-        return true;
-    }
+    //     // RemovePickedObject(this);
+    //     _pickedObject.Store();
+    //     return true;
+    // }
 
-    public bool TryExtractObject(string key)
-    {
-        // if (_pickedObject != null) return false;
-        // if (!_inventory.Remove(key, out PickableObject extractableObject)) return false;
+    // public bool TryExtractObject(string key)
+    // {
+    //     if (_pickedObject != null) return false;
+    //     if (!_inventory.Remove(key, out PickableObject extractableObject)) return false;
 
-        // extractableObject.Extract();
-        // PickObject(extractableObject);
-        return true;
-    }
+    //     extractableObject.Extract();
+    //     PickObject(extractableObject);
+    //     return true;
+    // }
 
     #endregion
 

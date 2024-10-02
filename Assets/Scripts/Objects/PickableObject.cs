@@ -48,6 +48,16 @@ public class PickableObject : NetworkBehaviour
         DropItemServerRpc(holderRef);
     }
 
+    public virtual void Store(NetworkObjectReference keeperRef)
+    {
+        StoreItemServerRpc(keeperRef);
+    }
+
+    public virtual void Extract(NetworkObjectReference keeperRef)
+    {
+        ExtractItemServerRpc(keeperRef);
+    }
+
     protected virtual void RemoveCurrentHolder(IHolder currentHolder)
     {
         Debug.Log("PickableObject -> RemoveCurrentHolder -> Start: { Holder: " + (Holder != null) + ", currentHolder: " + (currentHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
@@ -74,16 +84,6 @@ public class PickableObject : NetworkBehaviour
 
         Debug.Log("PickableObject -> SetNewHolder -> End: { Holder: " + (Holder != null) + ", newHolder: " + (newHolder != null) + ", FollowPosition: " + (FollowPosition != null) + " }");
     }
-
-    // public virtual void Store()
-    // {
-    //     StoreItemServerRpc();
-    // }
-
-    // public virtual void Extract()
-    // {
-    //     ExtractItemServerRpc();
-    // }
 
     #region  RPCs
 
@@ -151,34 +151,51 @@ public class PickableObject : NetworkBehaviour
         );
     }
 
-    // [ServerRpc(RequireOwnership = false)]
-    // protected void StoreItemServerRpc()
-    // {
-    //     StoreItemClientRpc();
-    // }
+    [ServerRpc(RequireOwnership = false)]
+    protected void StoreItemServerRpc(NetworkObjectReference keeperRef)
+    {
+        StoreItemClientRpc(keeperRef);
+    }
 
-    // [ClientRpc]
-    // protected void StoreItemClientRpc()
-    // {
-    //     transform.GetComponent<Renderer>().enabled = false;
-    //     transform.GetComponent<Collider>().enabled = false;
-    //     OnRelease?.Invoke(Holder);
-    //     Holder = null;
-    // }
+    [ClientRpc]
+    protected void StoreItemClientRpc(NetworkObjectReference keeperRef)
+    {
+        if (!keeperRef.TryGet(out NetworkObject networkObject)) return;
+        if (!networkObject.transform.TryGetComponent(out IObjectKeeper keeper)) return;
 
-    // [ServerRpc(RequireOwnership = false)]
-    // protected void ExtractItemServerRpc()
-    // {
-    //     ExtractItemClientRpc();
-    // }
+        transform.GetComponent<Renderer>().enabled = false;
+        transform.GetComponent<Collider>().enabled = false;
 
-    // [ClientRpc]
-    // protected void ExtractItemClientRpc()
-    // {
-    //     transform.GetComponent<Renderer>().enabled = true;
-    //     transform.GetComponent<Collider>().enabled = true;
-    //     FollowPosition = null;
-    // }
+        // if (Holder != null)
+        // {
+        //     OnDrop?.Invoke(Holder);
+        //     // Holder.DropObject();
+        //     RemoveCurrentHolder(Holder);
+        // }
+
+        if (keeper is IHolder holder) FollowPosition = holder.HolderTransform;
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void ExtractItemServerRpc(NetworkObjectReference keeperRef)
+    {
+        ExtractItemClientRpc(keeperRef);
+    }
+
+    [ClientRpc]
+    protected void ExtractItemClientRpc(NetworkObjectReference keeperRef)
+    {
+        // if (!keeperRef.TryGet(out NetworkObject networkObject)) return;
+        // if (!networkObject.transform.TryGetComponent(out IHolder holder)) return;
+
+        transform.GetComponent<Renderer>().enabled = true;
+        transform.GetComponent<Collider>().enabled = true;
+        // FollowPosition = null;
+
+        // SetNewHolder(holder);
+        // OnHold?.Invoke(holder);
+    }
 
     #endregion
 }

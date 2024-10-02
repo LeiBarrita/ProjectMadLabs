@@ -6,8 +6,8 @@ using UnityEngine;
 
 public abstract class ActivableObject : PickableObject
 {
-    public event Action<IHolder> OnActivationDown;
-    public event Action<IHolder> OnActivationUp;
+    public event Action<IHolder> OnActivationDown; // Action Trigger when push the button
+    public event Action<IHolder> OnActivationUp; // Action Trigger when release the button
 
     [NonSerialized]
     public bool Active = false;
