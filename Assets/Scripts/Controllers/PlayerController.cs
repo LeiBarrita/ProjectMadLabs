@@ -30,8 +30,8 @@ public class PlayerController : NetworkBehaviour
     #region Ground Check
 
     [Header("Ground Check")]
-    // public float playerHeight;
-    private Transform groundCheck;
+    public float playerHeight;
+    public Transform groundCheck;
     public LayerMask ground;
     private bool grounded = true;
 
@@ -59,17 +59,23 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // grounded = Physics.Raycast(
-        //     transform.position,
-        //     Vector3.down,
-        //     playerHeight * 0.5f + 0.2f,
-        //     ground
-        // );
+        // float groundRayLenght = playerHeight * 0.5f + 0.2f;
+        // float groundRayLenght = playerHeight;
+
+        grounded = Physics.Raycast(
+            groundCheck.position,
+            Vector3.down,
+            playerHeight,
+            ground
+        );
+
+        Debug.DrawRay(groundCheck.position, Vector3.down * playerHeight, Color.green);
 
         InputRead();
 
         SpeedControl();
 
+        // Debug.Log(grounded);
         if (grounded) rb.drag = groundDrag;
         else rb.drag = 0;
     }
@@ -79,13 +85,13 @@ public class PlayerController : NetworkBehaviour
         Movement();
     }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Ground"))
-        {
-            grounded = true;
-        }
-    }
+    // private void OnCollisionEnter(Collision other)
+    // {
+    //     if (other.gameObject.CompareTag("Ground"))
+    //     {
+    //         grounded = true;
+    //     }
+    // }
 
     #endregion
     #region Private Funcs
