@@ -9,7 +9,10 @@ public class PlayerController : NetworkBehaviour
     #region Movement
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private float baseSpeed = 1f;
+    [SerializeField] private float sprintMultiplier = 2f;
+    [SerializeField] private float crouchMultiplier = 0.5f;
+    private float moveSpeed = 0;
     [SerializeField] private float groundDrag = 1f;
 
     [SerializeField] private float jumpForce;
@@ -21,6 +24,8 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Keybinds")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
+    [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
 
     #region Ground Check
 
@@ -44,6 +49,8 @@ public class PlayerController : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+
+        moveSpeed = baseSpeed;
 
         // groundCheck = transform.Find("GroundCheck");
     }
@@ -99,6 +106,12 @@ public class PlayerController : NetworkBehaviour
             Jump();
             // readyToJump = true;
         }
+
+        if (Input.GetKeyDown(sprintKey)) moveSpeed += baseSpeed * sprintMultiplier;
+        if (Input.GetKeyUp(sprintKey)) moveSpeed -= baseSpeed * sprintMultiplier;
+
+        if (Input.GetKeyDown(crouchKey)) moveSpeed -= baseSpeed * crouchMultiplier;
+        if (Input.GetKeyUp(crouchKey)) moveSpeed += baseSpeed * crouchMultiplier;
     }
 
     private void Movement()
