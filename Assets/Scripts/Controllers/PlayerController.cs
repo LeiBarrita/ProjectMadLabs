@@ -105,6 +105,7 @@ public class PlayerController : NetworkBehaviour
         {
             Grounded = false;
             Jump();
+            return;
         }
 
         // if (Input.GetKeyDown(sprintKey)) moveSpeed += baseSpeed * sprintSpeedIncrement;
@@ -139,7 +140,7 @@ public class PlayerController : NetworkBehaviour
             rb.drag = 0;
             moveSpeed = baseSpeed * airSpeedReduction;
         }
-        // Debug.Log(currentValue + " " + newValue);
+        Debug.Log(currentValue + " " + newValue);
     }
 
     // private void AirInitialSpeed()
