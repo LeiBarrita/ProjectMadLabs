@@ -6,19 +6,17 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
-    #region Movement
+    #region ApplyMovement
 
-    [Header("Movement")]
+    [Header("ApplyMovement")]
     [SerializeField] private float baseSpeed = 1f;
-    [SerializeField] private float sprintMultiplier = 2f;
-    [SerializeField] private float crouchMultiplier = 0.5f;
-    private float moveSpeed = 0;
+    [SerializeField] private float airSpeedReduction = 0.2f;
+    [SerializeField] private float sprintSpeedIncrement = 2f;
+    [SerializeField] private float crouchSpeedDecrement = 0.5f;
     [SerializeField] private float groundDrag = 1f;
+    private float moveSpeed = 0;
 
     [SerializeField] private float jumpForce;
-    // [SerializeField] private float jumpCooldown;
-    [SerializeField] private float airMultiplayer;
-    private bool readyToJump = true;
 
     #endregion
 
@@ -33,7 +31,16 @@ public class PlayerController : NetworkBehaviour
     public float playerHeight;
     public Transform groundCheck;
     public LayerMask ground;
-    private bool grounded = true;
+    private bool _grounded = true;
+    private bool Grounded
+    {
+        get { return _grounded; }
+        set
+        {
+            ChangeMovementSpeed(_grounded, value);
+            _grounded = value;
+        }
+    }
 
     #endregion
 
@@ -50,7 +57,9 @@ public class PlayerController : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
-        moveSpeed = baseSpeed;
+        // Debug.Log("Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
+        // moveSpeed = baseSpeed;
+        // Debug.Log("Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
 
         // groundCheck = transform.Find("GroundCheck");
     }
@@ -59,96 +68,102 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // float groundRayLenght = playerHeight * 0.5f + 0.2f;
-        // float groundRayLenght = playerHeight;
-
-        grounded = Physics.Raycast(
+        Debug.DrawRay(groundCheck.position, Vector3.down * playerHeight, Color.green);
+        Grounded = Physics.Raycast(
             groundCheck.position,
             Vector3.down,
             playerHeight,
             ground
         );
+        // Debug.Log(_grounded);
 
-        Debug.DrawRay(groundCheck.position, Vector3.down * playerHeight, Color.green);
-
-        InputRead();
-
-        SpeedControl();
-
-        // Debug.Log(grounded);
-        if (grounded) rb.drag = groundDrag;
-        else rb.drag = 0;
+        MovementInput();
+        // SpeedControl();
     }
 
     private void FixedUpdate()
     {
-        Movement();
+        ApplyMovement();
     }
-
-    // private void OnCollisionEnter(Collision other)
-    // {
-    //     if (other.gameObject.CompareTag("Ground"))
-    //     {
-    //         grounded = true;
-    //     }
-    // }
 
     #endregion
     #region Private Funcs
 
-    private void InputRead()
+    private void MovementInput()
     {
+        // if (_grounded) GroundInitialSpeed();
+        // else AirInitialSpeed();
+
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        // Debug.Log("ready: " + readyToJump);
-        // Debug.Log("grounded: " + grounded);
+        // Debug.Log("_grounded: " + _grounded);
 
-        if (Input.GetKey(jumpKey) && grounded)
+        if (!Grounded) return;
+
+        if (Input.GetKey(jumpKey))
         {
-            // Debug.Log("Jump Press!");
-            // readyToJump = false;
-            grounded = false;
+            Grounded = false;
             Jump();
-            // readyToJump = true;
         }
 
-        if (Input.GetKeyDown(sprintKey)) moveSpeed += baseSpeed * sprintMultiplier;
-        if (Input.GetKeyUp(sprintKey)) moveSpeed -= baseSpeed * sprintMultiplier;
+        // if (Input.GetKeyDown(sprintKey)) moveSpeed += baseSpeed * sprintSpeedIncrement;
+        // if (Input.GetKeyUp(sprintKey)) moveSpeed -= baseSpeed * sprintSpeedIncrement;
+        if (Input.GetKey(sprintKey)) moveSpeed = baseSpeed * sprintSpeedIncrement;
 
-        if (Input.GetKeyDown(crouchKey)) moveSpeed -= baseSpeed * crouchMultiplier;
-        if (Input.GetKeyUp(crouchKey)) moveSpeed += baseSpeed * crouchMultiplier;
+        // if (Input.GetKeyDown(crouchKey)) moveSpeed -= baseSpeed * crouchSpeedDecrement;
+        // if (Input.GetKeyUp(crouchKey)) moveSpeed += baseSpeed * crouchSpeedDecrement;
+        else if (Input.GetKey(crouchKey)) moveSpeed = baseSpeed * crouchSpeedDecrement;
+        else if (moveSpeed != baseSpeed) moveSpeed = baseSpeed;
     }
 
-    private void Movement()
+    private void ApplyMovement()
     {
         moveDir = transform.forward * verticalInput + transform.right * horizontalInput;
+        Debug.Log("Direction: " + moveDir.normalized + "Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
 
-        rb.AddForce(10f * moveSpeed * moveDir.normalized, ForceMode.Force);
+        rb.AddForce(moveSpeed * moveDir.normalized, ForceMode.Force);
     }
 
-    private void SpeedControl()
+    private void ChangeMovementSpeed(bool currentValue, bool newValue)
     {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        if (currentValue == newValue) return;
 
-        if (flatVel.magnitude > moveSpeed)
+        if (newValue)
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            rb.drag = groundDrag;
+            moveSpeed = baseSpeed;
         }
+        else
+        {
+            rb.drag = 0;
+            moveSpeed = baseSpeed * airSpeedReduction;
+        }
+        // Debug.Log(currentValue + " " + newValue);
     }
+
+    // private void AirInitialSpeed()
+    // {
+    //     rb.drag = 0;
+    //     moveSpeed = baseSpeed * airSpeedReduction;
+    // }
+
+    // private void SpeedControl()
+    // {
+    //     Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+    //     if (flatVel.magnitude > moveSpeed)
+    //     {
+    //         Vector3 limitedVel = flatVel.normalized * moveSpeed;
+    //         rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+    //     }
+    // }
 
     private void Jump()
     {
-        // Debug.Log("Jumping!");
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        // rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
-
-    // private void ResetJump()
-    // {
-    //     readyToJump = true;
-    // }
 
     #endregion
 }
