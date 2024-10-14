@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -84,8 +85,11 @@ public class PlayerController : NetworkBehaviour
 
     private void MovementInput()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        bool isSprinting = Input.GetKey(sprintKey);
+        bool isCrouching = Input.GetKey(crouchKey);
+
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
         if (!Grounded) return;
 
@@ -96,18 +100,42 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        if (Input.GetKey(sprintKey)) moveSpeed = baseSpeed * sprintSpeedIncrement;
-        else if (Input.GetKey(crouchKey)) moveSpeed = baseSpeed * crouchSpeedDecrement;
+        if (isSprinting) moveSpeed = baseSpeed * sprintSpeedIncrement;
+        else if (isCrouching) moveSpeed = baseSpeed * crouchSpeedDecrement;
         else if (moveSpeed != baseSpeed) moveSpeed = baseSpeed;
     }
 
     private void ApplyMovement()
     {
-        // rb.velocity
+        verticalInput = MathF.Round(verticalInput);
+        horizontalInput = MathF.Round(horizontalInput);
+
+        if (verticalInput < 1) StopDirectionVelocity(transform.forward);
+        if (verticalInput > -1) StopDirectionVelocity(-transform.forward);
+        if (horizontalInput < 1) StopDirectionVelocity(transform.right);
+        if (horizontalInput > -1) StopDirectionVelocity(-transform.right);
+
         moveDir = transform.forward * verticalInput + transform.right * horizontalInput;
         rb.AddForce(moveSpeed * moveDir.normalized, ForceMode.Force);
 
+        // Debug.Log(verticalInput);
+        // Debug.Log(moveDir);
+        // Debug.Log(Vector3.Dot(rb.velocity, transform.forward));
+        // Debug.Log(transform.forward);
         // Debug.Log("Direction: " + moveDir.normalized + "Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
+    }
+
+    private void StopDirectionVelocity(Vector3 direction)
+    {
+        float forwardSpeed = Vector3.Dot(rb.velocity, direction);
+        float minSpeed = 0.2f;
+
+        if (forwardSpeed > minSpeed && Grounded)
+        {
+            Vector3 forwardVelocity = direction * forwardSpeed;
+            rb.velocity -= forwardVelocity;
+            Debug.Log("Stopped");
+        }
     }
 
     private void ChangeMovementSpeed(bool currentValue, bool newValue)
