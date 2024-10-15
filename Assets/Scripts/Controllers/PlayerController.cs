@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,14 +11,16 @@ public class PlayerController : NetworkBehaviour
     #region ApplyMovement
 
     [Header("ApplyMovement")]
-    [SerializeField] private float baseSpeed = 80f;
+    [SerializeField] private float baseSpeed = 2000f;
     [SerializeField] private float airSpeedMultiplier = 0.2f;
     [SerializeField] private float sprintSpeedIncrement = 2f;
     [SerializeField] private float crouchSpeedDecrement = 0.5f;
-    [SerializeField] private float groundDrag = 10f;
-    private float moveSpeed = 0;
+    [SerializeField] private float groundDrag = 5f;
+    private float moveSpeed;
 
-    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpForce = 300f;
+    [SerializeField] private int jumpCooldown = 200;
+    private bool canJump = true;
 
     #endregion
 
@@ -93,10 +96,14 @@ public class PlayerController : NetworkBehaviour
 
         if (!Grounded) return;
 
-        if (Input.GetKey(jumpKey))
+        if (Input.GetKeyDown(jumpKey) && canJump)
         {
+            LockTimerJumpAsync(jumpCooldown);
             Grounded = false;
             Jump();
+
+            Task.Delay(jumpCooldown);
+
             return;
         }
 
@@ -120,7 +127,7 @@ public class PlayerController : NetworkBehaviour
 
         // Debug.Log(verticalInput);
         // Debug.Log(moveDir);
-        // Debug.Log(Vector3.Dot(rb.velocity, transform.forward));
+        Debug.Log(Vector3.Dot(rb.velocity, transform.forward));
         // Debug.Log(transform.forward);
         // Debug.Log("Direction: " + moveDir.normalized + "Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
     }
@@ -134,7 +141,7 @@ public class PlayerController : NetworkBehaviour
         {
             Vector3 forwardVelocity = direction * forwardSpeed;
             rb.velocity -= forwardVelocity;
-            Debug.Log("Stopped");
+            // Debug.Log("Stopped");
         }
     }
 
@@ -152,7 +159,6 @@ public class PlayerController : NetworkBehaviour
             rb.drag = 0;
             moveSpeed = baseSpeed * airSpeedMultiplier;
         }
-        // Debug.Log(currentValue + " " + newValue);
     }
 
     private void SpeedControl()
@@ -168,8 +174,14 @@ public class PlayerController : NetworkBehaviour
 
     private void Jump()
     {
-        // rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+
+    private async void LockTimerJumpAsync(int lockTime)
+    {
+        canJump = false;
+        await Task.Delay(lockTime);
+        canJump = true;
     }
 
     #endregion
