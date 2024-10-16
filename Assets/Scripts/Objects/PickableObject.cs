@@ -10,9 +10,9 @@ public class PickableObject : NetworkBehaviour
     public event Action<IHolder> OnDrop; // Action trigger when the Holder loses this object
 
     public IHolder Holder;
-    // public bool CanShrink;
+    public bool IsStorable = true;
 
-    private Transform FollowPosition;
+    protected Transform FollowPosition;
     private Rigidbody rb;
 
     // Temporal
@@ -154,6 +154,7 @@ public class PickableObject : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     protected void StoreItemServerRpc(NetworkObjectReference keeperRef)
     {
+        if (!IsStorable) return;
         StoreItemClientRpc(keeperRef);
     }
 
@@ -173,6 +174,7 @@ public class PickableObject : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     protected void ExtractItemServerRpc()
     {
+        if (!IsStorable) return;
         ExtractItemClientRpc();
     }
 

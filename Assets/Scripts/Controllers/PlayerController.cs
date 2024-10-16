@@ -127,7 +127,7 @@ public class PlayerController : NetworkBehaviour
 
         // Debug.Log(verticalInput);
         // Debug.Log(moveDir);
-        Debug.Log(Vector3.Dot(rb.velocity, transform.forward));
+        // Debug.Log(Vector3.Dot(rb.velocity, transform.forward));
         // Debug.Log(transform.forward);
         // Debug.Log("Direction: " + moveDir.normalized + "Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
     }

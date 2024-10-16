@@ -367,7 +367,7 @@ MonoBehaviour:
   sprintSpeedIncrement: 2
   crouchSpeedDecrement: 0.5
   groundDrag: 5
-  jumpForce: 300
+  jumpForce: 200
   jumpCooldown: 200
   jumpKey: 32
   sprintKey: 304
