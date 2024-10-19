@@ -5,8 +5,9 @@ using UnityEngine;
 
 public interface IFuelHolder
 {
-    Transform HoldTransform { get; }
-    NetworkObjectReference HolderRef { get; }
-    public void PickFuel(PickableObject pickableObject);
+    Queue FuelInventory { get; set; }
+    Transform FuelHoldTransform { get; }
+    NetworkObjectReference FuelHolderRef { get; }
+    public void PickFuel(Fuel fuel);
     public void DropFuel();
 }
