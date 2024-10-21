@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Player : Creature, IHolder, IObjectKeeper
+public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
@@ -25,6 +25,14 @@ public class Player : Creature, IHolder, IObjectKeeper
     private readonly Dictionary<int, PickableObject> _inventory = new();
     public Dictionary<int, PickableObject> Inventory { get => _inventory; }
     public Vector3 ExtractPosition { get => _holdTranform.position; }
+
+    // IFuelHolder Properties
+    [Header("Fuel")]
+    [SerializeField] private Transform[] _fuelSpaces;
+    private Stack<Fuel> _fuelInventory = new();
+    public int FuelHoldingCount { get => _fuelInventory.Count; }
+    public Transform FuelHoldSpace { get => GetFreeFuelStorage(); }
+    public NetworkObjectReference FuelHolderRef { get => NetworkObject; }
 
     override protected void Start()
     {
@@ -62,6 +70,43 @@ public class Player : Creature, IHolder, IObjectKeeper
         _pickedObject.Drop(NetworkObject);
     }
 
+    public void PickFuelAction(Fuel fuel)
+    {
+        if (FuelHoldingCount >= _fuelSpaces.Length) return;
+        if (fuel.FuelHolder != null) return;
+
+        _fuelInventory.Push(fuel);
+        fuel.Pick(FuelHolderRef);
+    }
+
+    public void DropFuelAction()
+    {
+        if (FuelHoldingCount < 1) return;
+
+        Fuel droppedFuel = _fuelInventory.Pop();
+        droppedFuel.Drop(FuelHolderRef);
+    }
+
+    #region IHolder
+
+    public void PickObject(PickableObject pickableObject)
+    {
+        if (_pickedObject != null) return;
+
+        _pickedObject = pickableObject;
+    }
+
+    public void DropObject()
+    {
+        if (!ErrorHandler.ValueExists(_pickedObject, "Player", "DropObject", "_pickedObject")) return;
+
+        _pickedObject = null;
+    }
+
+    #endregion
+
+    #region IObjectKeeper
+
     public void StoreAction(int inventoryKey)
     {
         PickableObject storeObject = _pickedObject;
@@ -83,52 +128,30 @@ public class Player : Creature, IHolder, IObjectKeeper
         extractedObject.Pick(NetworkObject);
     }
 
-    #region IHolder
+    #endregion
 
-    public void PickObject(PickableObject pickableObject)
+    #region IFuelHolder
+
+    public void RemoveFuelReference(Fuel fuel)
     {
-        if (_pickedObject != null) return;
-
-        _pickedObject = pickableObject;
+        if (FuelHoldingCount < 1) return;
+        if (fuel != _fuelInventory.Peek()) return;
+        _fuelInventory.Pop();
     }
 
-    public void DropObject()
+    private Transform GetFreeFuelStorage()
     {
-        if (!ErrorHandler.ValueExists(_pickedObject, "Player", "DropObject", "_pickedObject")) return;
-
-        _pickedObject = null;
+        if (FuelHoldingCount > _fuelSpaces.Length) return null;
+        return _fuelSpaces[FuelHoldingCount - 1];
     }
 
     #endregion
-
-    // #region IObjectKeeper
-
-    // #endregion
 
     #region  Death Simulation
     private void SimulateDeath(Creature creature)
     {
         onPlayerDies.Raise(null, OwnerClientId);
         NetworkObject.Despawn();
-        // DelayedRespawn();
-    }
-
-    private async void DelayedRespawn()
-    {
-        // PlayerController pc = transform.GetComponent<PlayerController>();
-        // PickController pickc = transform.GetComponent<PickController>();
-
-        // pc.enabled = false;
-        // pickc.enabled = false;
-
-        await Task.Delay(3000);
-
-        // transform.position = Vector3.zero;
-        // pickc.enabled = true;
-        // pc.enabled = true;
-        // LifePoints = MaxLifePoints;
-
-        // transform.GetComponent<NetworkObject>().SpawnAsPlayerObject(NetworkObject.OwnerClientId);
     }
 
     #endregion

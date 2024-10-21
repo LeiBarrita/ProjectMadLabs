@@ -9,6 +9,7 @@ public class PickController : NetworkBehaviour
     [SerializeField] private KeyCode PickKey;
     [SerializeField] private KeyCode StoreKey;
     [SerializeField] private KeyCode ActivateKey;
+    [SerializeField] private KeyCode FuelActionKey;
     [SerializeField] private KeyCode[] InventoryKeys;
 
     private int selectedInventorySpace = 0;
@@ -37,14 +38,19 @@ public class PickController : NetworkBehaviour
     {
         if (Input.GetKeyDown(PickKey))
         {
+            if (Input.GetKey(FuelActionKey))
+            {
+                player.DropFuelAction();
+                return;
+            }
+
             if (player.PickedObject != null)
             {
                 player.DropAction();
+                return;
             }
-            else
-            {
-                TryPickObject();
-            }
+
+            TryPickObject();
         }
     }
 
@@ -91,9 +97,15 @@ public class PickController : NetworkBehaviour
         Ray cameraRay = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(cameraRay, out RaycastHit hitObject, raycastRange))
         {
+            if (hitObject.transform.TryGetComponent(out Fuel fuel))
+            {
+                player.PickFuelAction(fuel);
+                return;
+            }
             if (hitObject.transform.TryGetComponent(out PickableObject pickObject))
             {
                 player.PickAction(pickObject);
+                return;
             }
         }
     }
