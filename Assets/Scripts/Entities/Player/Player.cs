@@ -1,31 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
+[RequireComponent(typeof(PlayerHolder))]
+public class Player : Creature, IObjectKeeper, IFuelHolder
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
     public GameEvent onPlayerDies;
     public event Action OnPlayerDestroy;
 
-    // IHolder Properties
-    private Transform _holdTranform;
-    public Transform HoldTransform { get => _holdTranform; }
-    private Transform _holderTranform;
-    public Transform HolderTransform { get => _holderTranform; }
-    private PickableObject _pickedObject;
-    public PickableObject PickedObject { get => _pickedObject; }
-    public NetworkObjectReference HolderRef { get => NetworkObject; }
+    public PlayerHolder Holder;
 
     // IObjectKeeper Properties
     private readonly Dictionary<int, PickableObject> _inventory = new();
     public Dictionary<int, PickableObject> Inventory { get => _inventory; }
-    public Vector3 ExtractPosition { get => _holdTranform.position; }
+    public Vector3 ExtractPosition { get => Holder.HolderTransform.position; }
 
     // IFuelHolder Properties
     [Header("Fuel")]
@@ -41,8 +33,7 @@ public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
         onPlayerSpawns.Raise(this, null);
         OnDeath += SimulateDeath;
 
-        _holderTranform = transform;
-        _holdTranform = transform.Find("Hand").transform;
+        Holder = GetComponent<PlayerHolder>();
     }
 
     // public override void Damage(int damage)
@@ -68,7 +59,7 @@ public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
 
     public void DropAction()
     {
-        _pickedObject.Drop(NetworkObject);
+        Holder.PickedObject.Drop(NetworkObject);
     }
 
     public void PickFuelAction(Fuel fuel)
@@ -87,29 +78,11 @@ public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
         droppedFuel.Drop(NetworkObject);
     }
 
-    #region IHolder
-
-    public void PickObject(PickableObject pickableObject)
-    {
-        if (_pickedObject != null) return;
-
-        _pickedObject = pickableObject;
-    }
-
-    public void DropObject()
-    {
-        if (!ErrorHandler.ValueExists(_pickedObject, "Player", "DropObject", "_pickedObject")) return;
-
-        _pickedObject = null;
-    }
-
-    #endregion
-
     #region IObjectKeeper
 
     public void StoreAction(int inventoryKey)
     {
-        PickableObject storeObject = _pickedObject;
+        PickableObject storeObject = Holder.PickedObject;
 
         if (storeObject == null) return;
         if (_inventory.ContainsKey(inventoryKey)) return;
@@ -121,7 +94,7 @@ public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
 
     public void ExtractAction(int inventoryKey)
     {
-        if (_pickedObject != null) return;
+        if (Holder.PickedObject != null) return;
         if (!_inventory.Remove(inventoryKey, out PickableObject extractedObject)) return;
 
         extractedObject.Extract();

@@ -44,7 +44,7 @@ public class PickController : NetworkBehaviour
                 return;
             }
 
-            if (player.PickedObject != null)
+            if (player.Holder.PickedObject != null)
             {
                 player.DropAction();
                 return;
@@ -56,12 +56,12 @@ public class PickController : NetworkBehaviour
 
     private void HandleActivateInput()
     {
-        if (player.PickedObject is ActivableObject activableObject)
+        if (player.Holder.PickedObject is ActivableObject activableObject)
         {
             if (Input.GetKeyDown(ActivateKey))
-                activableObject.ActivateKeyDown(player.HolderRef);
+                activableObject.ActivateKeyDown(player.Holder.HolderRef);
             if (Input.GetKeyUp(ActivateKey))
-                activableObject.ActivateKeyUp(player.HolderRef);
+                activableObject.ActivateKeyUp(player.Holder.HolderRef);
         }
     }
 
@@ -79,7 +79,7 @@ public class PickController : NetworkBehaviour
     {
         if (Input.GetKeyDown(StoreKey))
         {
-            if (player.PickedObject != null)
+            if (player.Holder.PickedObject != null)
             {
                 // playerKeeper.TryStorePickedObject(selectedInventorySpace);
                 player.StoreAction(selectedInventorySpace);
