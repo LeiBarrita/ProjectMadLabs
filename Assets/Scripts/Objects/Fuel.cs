@@ -44,15 +44,11 @@ public class Fuel : NetworkBehaviour
 
     protected virtual void SetNewFuelHolder(IFuelHolder newFuelHolder)
     {
-        FuelHolder?.RemoveFuelReference(this);
-
         FuelHolder = newFuelHolder;
         FollowPosition = newFuelHolder.FuelHoldSpace;
-
-        Debug.Log("sdnkjsak");
         // rb.isKinematic = true;
 
-        // newFuelHolder.PickFuel(this);
+        newFuelHolder.PickFuel(this);
     }
 
     protected virtual void RemoveCurrentFuelHolder(IFuelHolder currentFuelHolder)
@@ -60,6 +56,7 @@ public class Fuel : NetworkBehaviour
         FuelHolder = null;
         FollowPosition = null;
         // rb.isKinematic = false;
+        currentFuelHolder.DropFuel();
     }
 
     #region  RPCs

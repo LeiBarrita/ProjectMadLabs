@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
 {
@@ -75,16 +76,15 @@ public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
         if (FuelHoldingCount >= _fuelSpaces.Length) return;
         if (fuel.FuelHolder != null) return;
 
-        _fuelInventory.Push(fuel);
-        fuel.Pick(FuelHolderRef);
+        fuel.Pick(NetworkObject);
     }
 
     public void DropFuelAction()
     {
         if (FuelHoldingCount < 1) return;
 
-        Fuel droppedFuel = _fuelInventory.Pop();
-        droppedFuel.Drop(FuelHolderRef);
+        Fuel droppedFuel = _fuelInventory.Peek();
+        droppedFuel.Drop(NetworkObject);
     }
 
     #region IHolder
@@ -132,17 +132,24 @@ public class Player : Creature, IHolder, IObjectKeeper, IFuelHolder
 
     #region IFuelHolder
 
-    public void RemoveFuelReference(Fuel fuel)
+    public void PickFuel(Fuel fuel)
+    {
+        if (FuelHoldingCount >= _fuelSpaces.Length) return;
+        _fuelInventory.Push(fuel);
+    }
+
+    public void DropFuel()
     {
         if (FuelHoldingCount < 1) return;
-        if (fuel != _fuelInventory.Peek()) return;
         _fuelInventory.Pop();
     }
 
     private Transform GetFreeFuelStorage()
     {
-        if (FuelHoldingCount > _fuelSpaces.Length) return null;
-        return _fuelSpaces[FuelHoldingCount - 1];
+        Debug.Log("GetFreeFuelStorage -> FuelHoldingCount:" + FuelHoldingCount);
+        Debug.Log("GetFreeFuelStorage -> FuelSpaces" + _fuelSpaces.Length);
+        if (FuelHoldingCount >= _fuelSpaces.Length) return null;
+        return _fuelSpaces[FuelHoldingCount];
     }
 
     #endregion

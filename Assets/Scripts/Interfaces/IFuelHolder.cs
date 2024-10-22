@@ -7,6 +7,6 @@ public interface IFuelHolder
 {
     Transform FuelHoldSpace { get; }
     NetworkObjectReference FuelHolderRef { get; }
-    public void RemoveFuelReference(Fuel fuel);
-
+    public void PickFuel(Fuel fuel);
+    public void DropFuel();
 }
