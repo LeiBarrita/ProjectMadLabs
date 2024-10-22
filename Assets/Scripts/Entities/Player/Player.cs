@@ -6,7 +6,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerHolder))]
 [RequireComponent(typeof(PlayerKeeper))]
-public class Player : Creature, IFuelHolder
+[RequireComponent(typeof(PlayerFuelHolder))]
+public class Player : Creature
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
@@ -16,14 +17,7 @@ public class Player : Creature, IFuelHolder
     [Header("Interactions")]
     public PlayerHolder Holder;
     public PlayerKeeper Keeper;
-
-    // IFuelHolder Properties
-    [Header("Fuel")]
-    [SerializeField] private Transform[] _fuelSpaces;
-    private Stack<Fuel> _fuelInventory = new();
-    public int FuelHoldingCount { get => _fuelInventory.Count; }
-    public Transform FuelHoldSpace { get => GetFreeFuelStorage(); }
-    public NetworkObjectReference FuelHolderRef { get => NetworkObject; }
+    public PlayerFuelHolder FuelHolder;
 
     override protected void Start()
     {
@@ -60,7 +54,7 @@ public class Player : Creature, IFuelHolder
 
     public void PickFuelAction(Fuel fuel)
     {
-        if (FuelHoldingCount >= _fuelSpaces.Length) return;
+        if (FuelHolder.FuelHoldingCount >= FuelHolder.FuelSpaces.Length) return;
         if (fuel.FuelHolder != null) return;
 
         fuel.Pick(NetworkObject);
@@ -68,35 +62,11 @@ public class Player : Creature, IFuelHolder
 
     public void DropFuelAction()
     {
-        if (FuelHoldingCount < 1) return;
+        if (FuelHolder.FuelHoldingCount < 1) return;
 
-        Fuel droppedFuel = _fuelInventory.Peek();
+        Fuel droppedFuel = FuelHolder.FuelInventory.Peek();
         droppedFuel.Drop(NetworkObject);
     }
-
-    #region IFuelHolder
-
-    public void PickFuel(Fuel fuel)
-    {
-        if (FuelHoldingCount >= _fuelSpaces.Length) return;
-        _fuelInventory.Push(fuel);
-    }
-
-    public void DropFuel()
-    {
-        if (FuelHoldingCount < 1) return;
-        _fuelInventory.Pop();
-    }
-
-    private Transform GetFreeFuelStorage()
-    {
-        Debug.Log("GetFreeFuelStorage -> FuelHoldingCount:" + FuelHoldingCount);
-        Debug.Log("GetFreeFuelStorage -> FuelSpaces" + _fuelSpaces.Length);
-        if (FuelHoldingCount >= _fuelSpaces.Length) return null;
-        return _fuelSpaces[FuelHoldingCount];
-    }
-
-    #endregion
 
     #region  Death Simulation
     private void SimulateDeath(Creature creature)

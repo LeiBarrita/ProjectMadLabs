@@ -312,6 +312,7 @@ GameObject:
   - component: {fileID: -5507471285106501631}
   - component: {fileID: 5887853642754664770}
   - component: {fileID: 5561512782869935404}
+  - component: {fileID: 5087243759503465922}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -352,7 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1702276614
+  GlobalObjectIdHash: 3629010415
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -506,11 +507,7 @@ MonoBehaviour:
   onPlayerDies: {fileID: 11400000, guid: f07bb97efb369dd46abf0e98b85716ce, type: 2}
   Holder: {fileID: 5887853642754664770}
   Keeper: {fileID: 5561512782869935404}
-  _fuelSpaces:
-  - {fileID: 6451616116167651011}
-  - {fileID: 3671623617320685394}
-  - {fileID: 317919985114246570}
-  - {fileID: 7163294021157895343}
+  FuelHolder: {fileID: 5087243759503465922}
 --- !u!114 &5887853642754664770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,6 +532,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af832dffb729ef41bf09d0a61ee17eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5087243759503465922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346239594762880011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e5e97e91fe39fb4d95b3d8448397255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FuelSpaces:
+  - {fileID: 6451616116167651011}
+  - {fileID: 3671623617320685394}
+  - {fileID: 317919985114246570}
+  - {fileID: 7163294021157895343}
 --- !u!1 &6798724559751856189
 GameObject:
   m_ObjectHideFlags: 0

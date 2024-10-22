@@ -81,12 +81,10 @@ public class PickController : NetworkBehaviour
         {
             if (player.Holder.PickedObject != null)
             {
-                // playerKeeper.TryStorePickedObject(selectedInventorySpace);
                 player.Keeper.StoreAction(player.Holder, selectedInventorySpace);
             }
             else
             {
-                // playerKeeper.TryExtractObject(selectedInventorySpace);
                 player.Keeper.ExtractAction(player.Holder, selectedInventorySpace);
             }
         }
