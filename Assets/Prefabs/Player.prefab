@@ -304,12 +304,14 @@ GameObject:
   - component: {fileID: 8750837744364983451}
   - component: {fileID: -342512684962261697}
   - component: {fileID: -4952160655284210050}
-  - component: {fileID: -5507471285106501631}
   - component: {fileID: -9182048056404189328}
   - component: {fileID: -8880941498102828268}
   - component: {fileID: -1826180228671786347}
   - component: {fileID: -3852353434711428388}
   - component: {fileID: 1681701603197982973}
+  - component: {fileID: -5507471285106501631}
+  - component: {fileID: 5887853642754664770}
+  - component: {fileID: 5561512782869935404}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -390,26 +392,6 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &-5507471285106501631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6346239594762880011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da64eba64565b574298f874af2fa3940, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxLifePoints: 100
-  onPlayerSpawns: {fileID: 11400000, guid: b5a181611cff5044c8461eaf1a7b74c9, type: 2}
-  onPlayerDies: {fileID: 11400000, guid: f07bb97efb369dd46abf0e98b85716ce, type: 2}
-  _fuelSpaces:
-  - {fileID: 6451616116167651011}
-  - {fileID: 3671623617320685394}
-  - {fileID: 317919985114246570}
-  - {fileID: 7163294021157895343}
 --- !u!54 &-9182048056404189328
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -507,6 +489,52 @@ MonoBehaviour:
   ActivateKey: 323
   FuelActionKey: 306
   InventoryKeys: 31000000320000003300000034000000
+--- !u!114 &-5507471285106501631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346239594762880011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da64eba64565b574298f874af2fa3940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxLifePoints: 100
+  onPlayerSpawns: {fileID: 11400000, guid: b5a181611cff5044c8461eaf1a7b74c9, type: 2}
+  onPlayerDies: {fileID: 11400000, guid: f07bb97efb369dd46abf0e98b85716ce, type: 2}
+  Holder: {fileID: 5887853642754664770}
+  Keeper: {fileID: 5561512782869935404}
+  _fuelSpaces:
+  - {fileID: 6451616116167651011}
+  - {fileID: 3671623617320685394}
+  - {fileID: 317919985114246570}
+  - {fileID: 7163294021157895343}
+--- !u!114 &5887853642754664770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346239594762880011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c8c9c0de3332744ca704cf42f2c994f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5561512782869935404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346239594762880011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6af832dffb729ef41bf09d0a61ee17eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6798724559751856189
 GameObject:
   m_ObjectHideFlags: 0

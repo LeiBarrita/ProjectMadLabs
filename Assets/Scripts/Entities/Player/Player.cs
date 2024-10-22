@@ -5,19 +5,17 @@ using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerHolder))]
-public class Player : Creature, IObjectKeeper, IFuelHolder
+[RequireComponent(typeof(PlayerKeeper))]
+public class Player : Creature, IFuelHolder
 {
     [Header("Events")]
     public GameEvent onPlayerSpawns;
     public GameEvent onPlayerDies;
     public event Action OnPlayerDestroy;
 
+    [Header("Interactions")]
     public PlayerHolder Holder;
-
-    // IObjectKeeper Properties
-    private readonly Dictionary<int, PickableObject> _inventory = new();
-    public Dictionary<int, PickableObject> Inventory { get => _inventory; }
-    public Vector3 ExtractPosition { get => Holder.HolderTransform.position; }
+    public PlayerKeeper Keeper;
 
     // IFuelHolder Properties
     [Header("Fuel")]
@@ -32,8 +30,6 @@ public class Player : Creature, IObjectKeeper, IFuelHolder
         base.Start();
         onPlayerSpawns.Raise(this, null);
         OnDeath += SimulateDeath;
-
-        Holder = GetComponent<PlayerHolder>();
     }
 
     // public override void Damage(int damage)
@@ -77,31 +73,6 @@ public class Player : Creature, IObjectKeeper, IFuelHolder
         Fuel droppedFuel = _fuelInventory.Peek();
         droppedFuel.Drop(NetworkObject);
     }
-
-    #region IObjectKeeper
-
-    public void StoreAction(int inventoryKey)
-    {
-        PickableObject storeObject = Holder.PickedObject;
-
-        if (storeObject == null) return;
-        if (_inventory.ContainsKey(inventoryKey)) return;
-
-        _inventory.Add(inventoryKey, storeObject);
-        storeObject.Drop(NetworkObject);
-        storeObject.Store(NetworkObject);
-    }
-
-    public void ExtractAction(int inventoryKey)
-    {
-        if (Holder.PickedObject != null) return;
-        if (!_inventory.Remove(inventoryKey, out PickableObject extractedObject)) return;
-
-        extractedObject.Extract();
-        extractedObject.Pick(NetworkObject);
-    }
-
-    #endregion
 
     #region IFuelHolder
 
