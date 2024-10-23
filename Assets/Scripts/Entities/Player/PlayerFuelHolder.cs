@@ -18,6 +18,22 @@ public class PlayerFuelHolder : NetworkBehaviour, IFuelHolder
         _fuelInventory.Push(fuel);
     }
 
+    public void PickFuelAction(Fuel fuel)
+    {
+        if (FuelHoldingCount >= FuelSpaces.Length) return;
+        if (fuel.FuelHolder != null) return;
+
+        fuel.Pick(NetworkObject);
+    }
+
+    public void DropFuelAction()
+    {
+        if (FuelHoldingCount < 1) return;
+
+        Fuel droppedFuel = FuelInventory.Peek();
+        droppedFuel.Drop(NetworkObject);
+    }
+
     public void DropFuel()
     {
         if (FuelHoldingCount < 1) return;
@@ -26,8 +42,6 @@ public class PlayerFuelHolder : NetworkBehaviour, IFuelHolder
 
     private Transform GetFreeFuelStorage()
     {
-        // Debug.Log("GetFreeFuelStorage -> FuelHoldingCount:" + FuelHoldingCount);
-        // Debug.Log("GetFreeFuelStorage -> FuelSpaces" + FuelSpaces.Length);
         if (FuelHoldingCount >= FuelSpaces.Length) return null;
         return FuelSpaces[FuelHoldingCount];
     }

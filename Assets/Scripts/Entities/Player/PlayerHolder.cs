@@ -19,6 +19,16 @@ public class PlayerHolder : NetworkBehaviour, IHolder
         _holdTranform = transform.Find("Hand").transform;
     }
 
+    public void PickAction(PickableObject pickableObject)
+    {
+        pickableObject.Pick(NetworkObject);
+    }
+
+    public void DropAction()
+    {
+        PickedObject.Drop(NetworkObject);
+    }
+
     public void PickObject(PickableObject pickableObject)
     {
         if (_pickedObject != null) return;

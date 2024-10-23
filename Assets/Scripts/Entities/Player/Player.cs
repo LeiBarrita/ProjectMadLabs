@@ -42,33 +42,8 @@ public class Player : Creature
         OnPlayerDestroy?.Invoke();
     }
 
-    public void PickAction(PickableObject pickableObject)
-    {
-        pickableObject.Pick(NetworkObject);
-    }
-
-    public void DropAction()
-    {
-        Holder.PickedObject.Drop(NetworkObject);
-    }
-
-    public void PickFuelAction(Fuel fuel)
-    {
-        if (FuelHolder.FuelHoldingCount >= FuelHolder.FuelSpaces.Length) return;
-        if (fuel.FuelHolder != null) return;
-
-        fuel.Pick(NetworkObject);
-    }
-
-    public void DropFuelAction()
-    {
-        if (FuelHolder.FuelHoldingCount < 1) return;
-
-        Fuel droppedFuel = FuelHolder.FuelInventory.Peek();
-        droppedFuel.Drop(NetworkObject);
-    }
-
     #region  Death Simulation
+
     private void SimulateDeath(Creature creature)
     {
         onPlayerDies.Raise(null, OwnerClientId);

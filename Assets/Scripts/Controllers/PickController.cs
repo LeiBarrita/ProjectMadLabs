@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PickController : NetworkBehaviour
 {
-    [SerializeField] private float raycastRange = 3f;
+    [SerializeField] private float raycastRange = 3.5f;
     [SerializeField] private KeyCode PickKey;
     [SerializeField] private KeyCode StoreKey;
     [SerializeField] private KeyCode ActivateKey;
@@ -13,13 +13,11 @@ public class PickController : NetworkBehaviour
     [SerializeField] private KeyCode[] InventoryKeys;
 
     private int selectedInventorySpace = 0;
-    private IObjectKeeper playerKeeper;
-    private Player player;
     private Camera mainCamera;
+    private Player player;
 
     private void Awake()
     {
-        playerKeeper = transform.GetComponent<IObjectKeeper>();
         player = transform.GetComponent<Player>();
         mainCamera = Camera.main;
     }
@@ -40,13 +38,13 @@ public class PickController : NetworkBehaviour
         {
             if (Input.GetKey(FuelActionKey))
             {
-                player.DropFuelAction();
+                player.FuelHolder.DropFuelAction();
                 return;
             }
 
             if (player.Holder.PickedObject != null)
             {
-                player.DropAction();
+                player.Holder.DropAction();
                 return;
             }
 
@@ -97,12 +95,13 @@ public class PickController : NetworkBehaviour
         {
             if (hitObject.transform.TryGetComponent(out Fuel fuel))
             {
-                player.PickFuelAction(fuel);
+                player.FuelHolder.PickFuelAction(fuel);
                 return;
             }
+
             if (hitObject.transform.TryGetComponent(out PickableObject pickObject))
             {
-                player.PickAction(pickObject);
+                player.Holder.PickAction(pickObject);
                 return;
             }
         }
