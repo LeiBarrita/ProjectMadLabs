@@ -11,14 +11,14 @@ public class PlayerController : NetworkBehaviour
     #region ApplyMovement
 
     [Header("ApplyMovement")]
-    [SerializeField] private float baseSpeed = 2000f;
+    [SerializeField] private float baseSpeed = 1800f;
     [SerializeField] private float airSpeedMultiplier = 0.2f;
     [SerializeField] private float sprintSpeedIncrement = 2f;
     [SerializeField] private float crouchSpeedDecrement = 0.5f;
     [SerializeField] private float groundDrag = 5f;
     private float moveSpeed;
 
-    [SerializeField] private float jumpForce = 300f;
+    [SerializeField] private float jumpForce = 400f;
     [SerializeField] private int jumpCooldown = 200;
     private bool canJump = true;
 
@@ -125,10 +125,7 @@ public class PlayerController : NetworkBehaviour
         moveDir = transform.forward * verticalInput + transform.right * horizontalInput;
         rb.AddForce(moveSpeed * moveDir.normalized, ForceMode.Force);
 
-        // Debug.Log(verticalInput);
-        // Debug.Log(moveDir);
         // Debug.Log(Vector3.Dot(rb.velocity, transform.forward));
-        // Debug.Log(transform.forward);
         // Debug.Log("Direction: " + moveDir.normalized + "Base Speed: " + baseSpeed + " Move Speed: " + moveSpeed);
     }
 
@@ -141,7 +138,6 @@ public class PlayerController : NetworkBehaviour
         {
             Vector3 forwardVelocity = direction * forwardSpeed;
             rb.velocity -= forwardVelocity;
-            // Debug.Log("Stopped");
         }
     }
 
