@@ -12,29 +12,29 @@ public class PlayerFuelHolder : NetworkBehaviour, IFuelHolder
     public Stack<Fuel> FuelInventory { get => _fuelInventory; }
     public int FuelHoldingCount { get => _fuelInventory.Count; }
 
-    public void PickFuel(Fuel fuel)
+    public void PackFuel(Fuel fuel)
     {
         if (FuelHoldingCount >= FuelSpaces.Length) return;
         _fuelInventory.Push(fuel);
     }
 
-    public void PickFuelAction(Fuel fuel)
+    public void PackFuelAction(Fuel fuel)
     {
         if (FuelHoldingCount >= FuelSpaces.Length) return;
         if (fuel.FuelHolder != null) return;
 
-        fuel.Pick(NetworkObject);
+        fuel.Pack(NetworkObject);
     }
 
-    public void DropFuelAction()
+    public void UnpackFuelAction()
     {
         if (FuelHoldingCount < 1) return;
 
-        Fuel droppedFuel = FuelInventory.Peek();
-        droppedFuel.Drop(NetworkObject);
+        Fuel unpackedFuel = FuelInventory.Peek();
+        unpackedFuel.Unpack(NetworkObject);
     }
 
-    public void DropFuel()
+    public void UnpackFuel()
     {
         if (FuelHoldingCount < 1) return;
         _fuelInventory.Pop();

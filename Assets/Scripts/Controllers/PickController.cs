@@ -9,8 +9,9 @@ public class PickController : NetworkBehaviour
     [SerializeField] private KeyCode PickKey;
     [SerializeField] private KeyCode StoreKey;
     [SerializeField] private KeyCode ActivateKey;
-    [SerializeField] private KeyCode FuelActionKey;
+    // [SerializeField] private KeyCode FuelActionKey;
     [SerializeField] private KeyCode[] InventoryKeys;
+    // [SerializeField] private KeyCode FuelKey;
 
     private int selectedInventorySpace = 0;
     private Camera mainCamera;
@@ -36,11 +37,11 @@ public class PickController : NetworkBehaviour
     {
         if (Input.GetKeyDown(PickKey))
         {
-            if (Input.GetKey(FuelActionKey))
-            {
-                player.FuelHolder.DropFuelAction();
-                return;
-            }
+            // if (Input.GetKey(FuelActionKey))
+            // {
+            //     player.FuelHolder.DropFuelAction();
+            //     return;
+            // }
 
             if (player.Holder.PickedObject != null)
             {
@@ -75,11 +76,16 @@ public class PickController : NetworkBehaviour
 
     private void HandleStoreInput()
     {
+        var currentObject = player.Holder.PickedObject;
         if (Input.GetKeyDown(StoreKey))
         {
-            if (player.Holder.PickedObject != null)
+
+            if (currentObject != null)
             {
-                player.Keeper.StoreAction(player.Holder, selectedInventorySpace);
+                if (currentObject is Fuel currentFuel)
+                    player.FuelHolder.PackFuelAction(currentFuel);
+                else
+                    player.Keeper.StoreAction(player.Holder, selectedInventorySpace);
             }
             else
             {
@@ -93,11 +99,11 @@ public class PickController : NetworkBehaviour
         Ray cameraRay = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(cameraRay, out RaycastHit hitObject, raycastRange))
         {
-            if (hitObject.transform.TryGetComponent(out Fuel fuel))
-            {
-                player.FuelHolder.PickFuelAction(fuel);
-                return;
-            }
+            // if (hitObject.transform.TryGetComponent(out Fuel fuel))
+            // {
+            //     player.FuelHolder.PickFuelAction(fuel);
+            //     return;
+            // }
 
             if (hitObject.transform.TryGetComponent(out PickableObject pickObject))
             {

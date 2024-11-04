@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Fuel : NetworkBehaviour
+public class Fuel : PickableObject
 {
     public IFuelHolder FuelHolder;
-    private Transform FollowPosition;
+    // private Transform FollowPosition;
     // private Rigidbody rb;
 
     // Temporal
-    protected virtual void Awake()
-    {
-        // rb = transform.GetComponent<Rigidbody>();
-        // rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
-        // rb.freezeRotation = true;
-        // rb.isKinematic = false;
-    }
+    // protected virtual void Awake()
+    // {
+    // rb = transform.GetComponent<Rigidbody>();
+    // rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+    // rb.freezeRotation = true;
+    // rb.isKinematic = false;
+    // }
 
-    protected virtual void LateUpdate()
-    {
-        if (FollowPosition == null) return;
-        FollowHoldPosition(FollowPosition);
-    }
+    // protected virtual void LateUpdate()
+    // {
+    //     if (FollowPosition == null) return;
+    //     FollowHoldPosition(FollowPosition);
+    // }
 
-    protected virtual void FollowHoldPosition(Transform followPos)
+    // protected virtual void FollowHoldPosition(Transform followPos)
+    protected override void FollowHoldPosition(Transform followPos)
     {
         transform.SetPositionAndRotation(
             followPos.position,
@@ -32,14 +33,14 @@ public class Fuel : NetworkBehaviour
         );
     }
 
-    public virtual void Pick(NetworkObjectReference holderRef)
+    public virtual void Pack(NetworkObjectReference holderRef)
     {
-        PickFuelServerRpc(holderRef);
+        PackFuelServerRpc(holderRef);
     }
 
-    public virtual void Drop(NetworkObjectReference holderRef)
+    public virtual void Unpack(NetworkObjectReference holderRef)
     {
-        DropFuelServerRpc(holderRef);
+        UnpackFuelServerRpc(holderRef);
     }
 
     protected virtual void SetNewFuelHolder(IFuelHolder newFuelHolder)
@@ -48,7 +49,7 @@ public class Fuel : NetworkBehaviour
         FollowPosition = newFuelHolder.FuelHoldSpace;
         // rb.isKinematic = true;
 
-        newFuelHolder.PickFuel(this);
+        newFuelHolder.PackFuel(this);
     }
 
     protected virtual void RemoveCurrentFuelHolder(IFuelHolder currentFuelHolder)
@@ -56,19 +57,19 @@ public class Fuel : NetworkBehaviour
         FuelHolder = null;
         FollowPosition = null;
         // rb.isKinematic = false;
-        currentFuelHolder.DropFuel();
+        currentFuelHolder.UnpackFuel();
     }
 
     #region  RPCs
 
     [ServerRpc(RequireOwnership = false)]
-    protected void PickFuelServerRpc(NetworkObjectReference holderRef)
+    protected void PackFuelServerRpc(NetworkObjectReference holderRef)
     {
-        PickFuelClientRpc(holderRef);
+        PackFuelClientRpc(holderRef);
     }
 
     [ClientRpc]
-    protected void PickFuelClientRpc(NetworkObjectReference holderRef)
+    protected void PackFuelClientRpc(NetworkObjectReference holderRef)
     {
 
         if (!holderRef.TryGet(out NetworkObject networkObject)) return;
@@ -84,13 +85,13 @@ public class Fuel : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void DropFuelServerRpc(NetworkObjectReference holderRef)
+    protected void UnpackFuelServerRpc(NetworkObjectReference holderRef)
     {
-        DropFuelClientRpc(holderRef);
+        UnpackFuelClientRpc(holderRef);
     }
 
     [ClientRpc]
-    protected void DropFuelClientRpc(NetworkObjectReference holderRef)
+    protected void UnpackFuelClientRpc(NetworkObjectReference holderRef)
     {
         if (!holderRef.TryGet(out NetworkObject networkObject)) return;
         if (!networkObject.transform.TryGetComponent(out IFuelHolder currentHolder)) return;

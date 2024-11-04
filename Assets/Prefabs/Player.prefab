@@ -488,7 +488,6 @@ MonoBehaviour:
   PickKey: 101
   StoreKey: 114
   ActivateKey: 323
-  FuelActionKey: 306
   InventoryKeys: 31000000320000003300000034000000
 --- !u!114 &-5507471285106501631
 MonoBehaviour:
